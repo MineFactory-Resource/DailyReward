@@ -1,0 +1,8 @@
+Rewards:
+  day1:
+    slot: 0
+    name: "&a1일차"
+    lore:
+      - ""
+    commands:
+      - ""
