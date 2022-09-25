@@ -1,7 +1,8 @@
 Rewards:
   day1:
     slot: 0
-    name: "&a1일차"
+    name: "&a1일차 보상"
+    item_type: "EMERALD"
     lore:
       - ""
     commands:
