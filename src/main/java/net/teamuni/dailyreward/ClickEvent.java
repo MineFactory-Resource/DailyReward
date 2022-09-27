@@ -6,8 +6,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 
 public class ClickEvent implements Listener {
     @EventHandler
-    public void clickEvent(InventoryClickEvent e){
-
+    public void clickEvent(InventoryClickEvent e) {
         e.setCancelled(true);
     }
 }
