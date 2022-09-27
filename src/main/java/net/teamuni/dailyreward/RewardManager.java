@@ -21,11 +21,11 @@ public class RewardManager {
         file = new File(main.getDataFolder(), "rewards.yml");
 
         if (!file.exists()) {
-            main.saveResource("messages.yml", false);
+            main.saveResource("rewards.yml", false);
         }
         rewardsFile = YamlConfiguration.loadConfiguration(file);
     }
-    public FileConfiguration getConfig() {
+    public static FileConfiguration getConfig() {
         return rewardsFile;
     }
 
@@ -42,25 +42,21 @@ public class RewardManager {
     }
 
     @NotNull
-    public Map<Integer, ItemStack> getRewards(String path){
+    public static Map<Integer, ItemStack> getRewards(String path){
         Map<Integer, ItemStack> rewards = new HashMap<>();
-        Set<String> rewardsKeys = this.getConfig().getConfigurationSection(path).getKeys(false);
+        Set<String> rewardsKeys = getConfig().getConfigurationSection(path).getKeys(false);
         if (rewardsKeys.isEmpty()) {
             throw new IllegalArgumentException("rewards.yml 에서 문제가 발생했습니다.");
         }
         for (String key : rewardsKeys) {
-            int slot = this.getConfig().getInt(path + "." + key + ".slot");
+            int slot = getConfig().getInt(path + "." + key + ".slot");
             try {
-                ItemStack rewardsItem = new ItemStack(Material.valueOf(this.getConfig().getString(path + "." + key +".item_type")));
+                ItemStack rewardsItem = new ItemStack(Material.valueOf(getConfig().getString(path + "." + key +".item_type")));
                 ItemMeta meta = rewardsItem.getItemMeta();
-                String rewardsName = this.getConfig().getString(path + "." + key + ".name");
+                String rewardsName = getConfig().getString(path + "." + key + ".name");
                 List<String> rewardLoreList = new ArrayList<>();
-                for (String lores : this.getConfig().getStringList(path + "." + key + ".lore")){
+                for (String lores : getConfig().getStringList(path + "." + key + ".lore")){
                     rewardLoreList.add(ChatColor.translateAlternateColorCodes('&', lores));
-                }
-                List<String> rewardCommandList = new ArrayList<>();
-                for (String rewardscommands : this.getConfig().getStringList(path + "." + key + ".commands")){
-                    rewardCommandList.add(rewardscommands);
                 }
                 meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', rewardsName));
                 meta.setLore(rewardLoreList);
