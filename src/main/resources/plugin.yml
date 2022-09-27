@@ -4,4 +4,10 @@ main: net.teamuni.dailyreward.Dailyreward
 api-version: 1.18
 commands:
   출석체크:
+    permission: dailyreward.opengui
+permissions:
+  dailyreward.opengui:
+    default: true
+  dailyreward.reload:
+    default: op
 
