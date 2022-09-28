@@ -4,6 +4,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
@@ -60,6 +61,7 @@ public class RewardManager {
                 }
                 meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', rewardsName));
                 meta.setLore(rewardLoreList);
+                meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
                 rewardsItem.setItemMeta(meta);
                 rewards.put(slot, rewardsItem);
             } catch (NullPointerException | IllegalArgumentException e) {
