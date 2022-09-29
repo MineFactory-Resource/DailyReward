@@ -20,6 +20,7 @@ public final class Dailyreward extends JavaPlugin implements Listener {
     @Override
     public void onDisable() {
         RewardManager rm = new RewardManager();
+        rm.reload();
         rm.save();
     }
 
