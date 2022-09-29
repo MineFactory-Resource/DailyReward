@@ -8,11 +8,13 @@ import org.bukkit.event.inventory.InventoryDragEvent;
 public class ClickEvent implements Listener {
     @EventHandler
     public void clickEvent(InventoryClickEvent e) {
+        if (!e.getInventory().equals(RewardManager.DailyRewardGui)) return;
         e.setCancelled(true);
-    }
 
+    }
     @EventHandler
-    public void clickEvent(InventoryDragEvent e) {
+    public void dragEvent(InventoryDragEvent e) {
+        if (!e.getInventory().equals(RewardManager.DailyRewardGui)) return;
         e.setCancelled(true);
     }
 }
