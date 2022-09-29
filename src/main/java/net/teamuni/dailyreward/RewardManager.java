@@ -1,9 +1,15 @@
 package net.teamuni.dailyreward;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryDragEvent;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -13,12 +19,16 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
-public class RewardManager {
+public class RewardManager implements Listener {
     private static final Dailyreward main = Dailyreward.getPlugin(Dailyreward.class);
+    private static final Map<Integer, ItemStack> dailyItem = new HashMap<>();
+    private static final Set<ItemMeta> dailyItemMetaSet = new HashSet<>();
     private static File file;
     private static FileConfiguration rewardsFile;
 
-    public static void createRewardsYml() {
+    public static final Inventory DailyRewardGui = Bukkit.createInventory(null, 54, ChatColor.GREEN + "출석체크 GUI");
+
+    public void createRewardsYml() {
         file = new File(main.getDataFolder(), "rewards.yml");
 
         if (!file.exists()) {
@@ -31,19 +41,19 @@ public class RewardManager {
     }
 
 
-    public static void save() {
+    public void save() {
         try {
             rewardsFile.save(file);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-    public static void reload() {
+    public void reload() {
         rewardsFile = YamlConfiguration.loadConfiguration(file);
     }
 
     @NotNull
-    public static Map<Integer, ItemStack> getRewards(String path){
+    public Map<Integer, ItemStack> getRewards(String path){
         Map<Integer, ItemStack> rewards = new HashMap<>();
         Set<String> rewardsKeys = getConfig().getConfigurationSection(path).getKeys(false);
         if (rewardsKeys.isEmpty()) {
@@ -69,5 +79,15 @@ public class RewardManager {
             }
         }
         return rewards;
+    }
+
+    public void setGui(){
+        dailyItem.putAll(getRewards("Rewards"));
+        for (ItemStack itemStack : dailyItem.values()) {
+            dailyItemMetaSet.add(itemStack.getItemMeta());
+        }
+        for (Map.Entry<Integer, ItemStack> dailyitems : dailyItem.entrySet()){
+            DailyRewardGui.setItem(dailyitems.getKey(), dailyitems.getValue());
+        }
     }
 }
