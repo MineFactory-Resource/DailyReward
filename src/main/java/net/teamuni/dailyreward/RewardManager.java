@@ -19,9 +19,9 @@ import java.util.*;
 public class RewardManager implements Listener {
     private final Dailyreward main = Dailyreward.getPlugin(Dailyreward.class);
     private final Map<Integer, ItemStack> dailyItem = new HashMap<>();
-    private static final Set<ItemMeta> dailyItemMetaSet = new HashSet<>();
-    private static File file;
-    private static FileConfiguration rewardsFile;
+    private final Set<ItemMeta> dailyItemMetaSet = new HashSet<>();
+    private File file;
+    private FileConfiguration rewardsFile;
 
     public static final Inventory DailyRewardGui = Bukkit.createInventory(null, 54, ChatColor.GREEN + "출석체크 GUI");
 
@@ -33,7 +33,7 @@ public class RewardManager implements Listener {
         }
         rewardsFile = YamlConfiguration.loadConfiguration(file);
     }
-    public static FileConfiguration getConfig() {
+    public FileConfiguration getConfig() {
         return rewardsFile;
     }
 
