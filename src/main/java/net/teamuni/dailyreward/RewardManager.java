@@ -5,10 +5,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
@@ -20,8 +17,8 @@ import java.io.IOException;
 import java.util.*;
 
 public class RewardManager implements Listener {
-    private static final Dailyreward main = Dailyreward.getPlugin(Dailyreward.class);
-    private static final Map<Integer, ItemStack> dailyItem = new HashMap<>();
+    private final Dailyreward main = Dailyreward.getPlugin(Dailyreward.class);
+    private final Map<Integer, ItemStack> dailyItem = new HashMap<>();
     private static final Set<ItemMeta> dailyItemMetaSet = new HashSet<>();
     private static File file;
     private static FileConfiguration rewardsFile;
