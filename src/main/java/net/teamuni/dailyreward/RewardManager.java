@@ -57,17 +57,18 @@ public class RewardManager implements Listener {
             throw new IllegalArgumentException("rewards.yml 파일의 내용이 비어있습니다. rewards.yml파일을 확인해주세요.");
         }
         for (String key : rewardsKeys) {
+            ConfigurationSection sectionSecond = section.getConfigurationSection(key);
             int slot = section.getInt(key + ".slot");
             try {
-                ItemStack rewardsItem = new ItemStack(Material.valueOf(section.getString(key + ".item_type")));
+                ItemStack rewardsItem = new ItemStack(Material.valueOf(sectionSecond.getString("item_type")));
                 ItemMeta meta = rewardsItem.getItemMeta();
-                String rewardsName = section.getString(key + ".name");
+                String rewardsName = sectionSecond.getString("name");
                 List<String> rewardLoreList = new ArrayList<>();
                 List<String> commandList = new ArrayList<>();
-                for (String lores : section.getStringList(key + ".lore")){
+                for (String lores : sectionSecond.getStringList("lore")){
                     rewardLoreList.add(ChatColor.translateAlternateColorCodes('&', lores));
                 }
-                for (String commands : section.getStringList(key + ".commands")){
+                for (String commands : sectionSecond.getStringList("commands")){
                     commandList.add(commands);
                 }
                 if (rewardsName != null) {
