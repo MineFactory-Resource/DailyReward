@@ -20,34 +20,35 @@ public class RewardManager implements Listener {
     private final Dailyreward main = Dailyreward.getPlugin(Dailyreward.class);
     private final Map<Integer, ItemStack> dailyItem = new HashMap<>();
     private final Set<ItemMeta> dailyItemMetaSet = new HashSet<>();
-    private File file;
-    private FileConfiguration rewardsFile;
-
-    public static final Inventory DailyRewardGui = Bukkit.createInventory(null, 54, ChatColor.GREEN + "출석체크 GUI");
+    private File file = null;
+    private FileConfiguration rewardsFile = null;
+    public final Inventory DailyRewardGui = Bukkit.createInventory(null, 54, ChatColor.GREEN + "출석체크 GUI");
 
     public void createRewardsYml() {
-        file = new File(main.getDataFolder(), "rewards.yml");
+        this.file = new File(main.getDataFolder(), "rewards.yml");
 
         if (!file.exists()) {
             main.saveResource("rewards.yml", false);
         }
-        rewardsFile = YamlConfiguration.loadConfiguration(file);
+        this.rewardsFile = YamlConfiguration.loadConfiguration(file);
     }
     public FileConfiguration getConfig() {
-        return rewardsFile;
+        return this.rewardsFile;
     }
 
-
+    public void reload() {
+        this.rewardsFile = YamlConfiguration.loadConfiguration(file);
+    }
+    
+    /*
     public void save() {
-        try {
-            rewardsFile.save(file);
-        } catch (IOException e) {
+        try{
+            this.rewardsFile.save(file);
+        } catch (IOException e){
             e.printStackTrace();
         }
     }
-    public void reload() {
-        rewardsFile = YamlConfiguration.loadConfiguration(file);
-    }
+     */
 
     @NotNull
     public Map<Integer, ItemStack> getRewards(String path){
@@ -63,8 +64,12 @@ public class RewardManager implements Listener {
                 ItemMeta meta = rewardsItem.getItemMeta();
                 String rewardsName = getConfig().getString(path + "." + key + ".name");
                 List<String> rewardLoreList = new ArrayList<>();
+                List<String> commandList = new ArrayList<>();
                 for (String lores : getConfig().getStringList(path + "." + key + ".lore")){
                     rewardLoreList.add(ChatColor.translateAlternateColorCodes('&', lores));
+                }
+                for (String commands : getConfig().getStringList(path + "." + key + ".commands")){
+                    commandList.add(commands);
                 }
                 meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', rewardsName));
                 meta.setLore(rewardLoreList);
@@ -79,12 +84,12 @@ public class RewardManager implements Listener {
     }
 
     public void setGui(){
-        dailyItem.putAll(getRewards("Rewards"));
-        for (ItemStack itemStack : dailyItem.values()) {
-            dailyItemMetaSet.add(itemStack.getItemMeta());
+        this.dailyItem.putAll(getRewards("Rewards"));
+        for (ItemStack itemStack : this.dailyItem.values()) {
+            this.dailyItemMetaSet.add(itemStack.getItemMeta());
         }
-        for (Map.Entry<Integer, ItemStack> dailyitems : dailyItem.entrySet()){
-            DailyRewardGui.setItem(dailyitems.getKey(), dailyitems.getValue());
+        for (Map.Entry<Integer, ItemStack> dailyitems : this.dailyItem.entrySet()){
+            this.DailyRewardGui.setItem(dailyitems.getKey(), dailyitems.getValue());
         }
     }
 }
