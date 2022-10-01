@@ -29,7 +29,7 @@ public final class Dailyreward extends JavaPlugin implements Listener {
     public boolean onCommand(@NotNull CommandSender sender, Command cmd, @NotNull String label, String[] args) {
         Player player = (Player) sender;
         if (cmd.getName().equals("출석체크") && player.hasPermission("dailyreward.opengui")) {
-            player.openInventory(rewardManager.DailyRewardGui);
+            player.openInventory(rewardManager.dailyRewardGui);
         }
         if (cmd.getName().equals("dailyreward") && player.hasPermission("dailyreward.reload")) {
             if (args.length > 0) {

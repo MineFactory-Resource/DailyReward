@@ -9,7 +9,7 @@ import org.bukkit.inventory.Inventory;
 public class ClickEvent implements Listener {
     private final Inventory inventory;
     public ClickEvent(RewardManager rewardManager){
-        this.inventory = rewardManager.DailyRewardGui;
+        this.inventory = rewardManager.dailyRewardGui;
     }
 
 
