@@ -8,13 +8,13 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemFactory;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.*;
 
 public class RewardManager implements Listener {
@@ -24,6 +24,8 @@ public class RewardManager implements Listener {
     private File file = null;
     private FileConfiguration rewardsFile = null;
     public final Inventory dailyRewardGui = Bukkit.createInventory(null, 54, ChatColor.GREEN + "출석체크 GUI");
+    public final Map<Integer, ItemStack> rewards = new HashMap<>();
+    public final Map<Integer, List<String>> commands = new HashMap<>();
 
     public void createRewardsYml() {
         this.file = new File(main.getDataFolder(), "rewards.yml");
@@ -50,7 +52,6 @@ public class RewardManager implements Listener {
 
     @NotNull
     public Map<Integer, ItemStack> getRewards(String path){
-        Map<Integer, ItemStack> rewards = new HashMap<>();
         ConfigurationSection section = this.rewardsFile.getConfigurationSection(path);
         Set<String> rewardsKeys = section.getKeys(false);
         if (rewardsKeys.isEmpty()) {
@@ -64,13 +65,11 @@ public class RewardManager implements Listener {
                 ItemMeta meta = rewardsItem.getItemMeta();
                 String rewardsName = sectionSecond.getString("name");
                 List<String> rewardLoreList = new ArrayList<>();
-                List<String> commandList = new ArrayList<>();
                 for (String lores : sectionSecond.getStringList("lore")){
                     rewardLoreList.add(ChatColor.translateAlternateColorCodes('&', lores));
                 }
-                for (String commands : sectionSecond.getStringList("commands")){
-                    commandList.add(commands);
-                }
+                List<String> commandList = new ArrayList<>(sectionSecond.getStringList("commands"));
+                commands.put(slot, commandList);
                 if (rewardsName != null) {
                     meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', rewardsName));
                 } else {
