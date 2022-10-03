@@ -8,7 +8,6 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemFactory;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -25,7 +24,7 @@ public class RewardManager implements Listener {
     private FileConfiguration rewardsFile = null;
     public final Inventory dailyRewardGui = Bukkit.createInventory(null, 54, ChatColor.GREEN + "출석체크 GUI");
     public final Map<Integer, ItemStack> rewards = new HashMap<>();
-    public final Map<Integer, List<String>> commands = new HashMap<>();
+    public Map<Integer, List<String>> commands = new HashMap<>();
 
     public void createRewardsYml() {
         this.file = new File(main.getDataFolder(), "rewards.yml");
@@ -69,7 +68,6 @@ public class RewardManager implements Listener {
                     rewardLoreList.add(ChatColor.translateAlternateColorCodes('&', lores));
                 }
                 List<String> commandList = new ArrayList<>(sectionSecond.getStringList("commands"));
-                commands.put(slot, commandList);
                 if (rewardsName != null) {
                     meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', rewardsName));
                 } else {
@@ -79,12 +77,18 @@ public class RewardManager implements Listener {
                 meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
                 rewardsItem.setItemMeta(meta);
                 rewards.put(slot, rewardsItem);
+                commands.put(slot, commandList);
             } catch (IllegalArgumentException e) {
                 e.printStackTrace();
             }
         }
         return rewards;
     }
+    public Map<Integer, List<String>> getCommandsMap() {
+        return commands;
+    }
+
+
 
     public void setGui(){
         this.dailyItem.putAll(getRewards("Rewards"));
