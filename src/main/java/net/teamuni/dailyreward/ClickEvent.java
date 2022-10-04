@@ -1,26 +1,51 @@
 package net.teamuni.dailyreward;
 
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.inventory.Inventory;
 
+import java.io.File;
+import java.util.List;
+import java.util.Set;
+
 public class ClickEvent implements Listener {
     private final Inventory inventory;
-    public ClickEvent(RewardManager rewardManager){
-        this.inventory = rewardManager.dailyRewardGui;
+
+    public ClickEvent(RewardManager rewardManager){ this.inventory = rewardManager.dailyRewardGui; }
+
+    public ConfigurationSection loadConfiguration() {
+        File file = new File("plugins/Dailyreward", "rewards.yml");
+        YamlConfiguration yaml = YamlConfiguration.loadConfiguration(file);
+        return yaml.getConfigurationSection("Rewards");
     }
 
 
     @EventHandler
     public void clickEvent(InventoryClickEvent e) {
-        if(!e.getInventory().equals(inventory)) return;
+        Player player = (Player) e.getWhoClicked();
+        Set<String> rewardsKeys = loadConfiguration().getKeys(false);
+        if (!e.getInventory().equals(inventory)) return;
+        if (e.getCurrentItem() == null) return;
+        for (String key : rewardsKeys){
+            ConfigurationSection section = loadConfiguration().getConfigurationSection(key);
+            if (section.getString("slot") == null) return;
+            if (e.getSlot() == section.getInt("slot")){
+                List<String> commandList = section.getStringList("commands");
+                for (String command : commandList) {
+                    player.performCommand(command);
+                }
+            }
+        }
         e.setCancelled(true);
     }
     @EventHandler
     public void dragEvent(InventoryDragEvent e) {
-        if(!e.getInventory().equals(inventory)) return;
+        if (!e.getInventory().equals(inventory)) return;
         e.setCancelled(true);
     }
 }
