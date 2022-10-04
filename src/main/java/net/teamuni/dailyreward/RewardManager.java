@@ -3,6 +3,7 @@ package net.teamuni.dailyreward;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.configuration.Configuration;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -23,8 +24,6 @@ public class RewardManager implements Listener {
     private File file = null;
     private FileConfiguration rewardsFile = null;
     public final Inventory dailyRewardGui = Bukkit.createInventory(null, 54, ChatColor.GREEN + "출석체크 GUI");
-    public final Map<Integer, ItemStack> rewards = new HashMap<>();
-    public Map<Integer, List<String>> commands = new HashMap<>();
 
     public void createRewardsYml() {
         this.file = new File(main.getDataFolder(), "rewards.yml");
@@ -52,13 +51,14 @@ public class RewardManager implements Listener {
     @NotNull
     public Map<Integer, ItemStack> getRewards(String path){
         ConfigurationSection section = this.rewardsFile.getConfigurationSection(path);
+        Map<Integer, ItemStack> rewards = new HashMap<>();
         Set<String> rewardsKeys = section.getKeys(false);
         if (rewardsKeys.isEmpty()) {
             throw new IllegalArgumentException("rewards.yml 파일의 내용이 비어있습니다. rewards.yml파일을 확인해주세요.");
         }
         for (String key : rewardsKeys) {
             ConfigurationSection sectionSecond = section.getConfigurationSection(key);
-            int slot = section.getInt(key + ".slot");
+            int slot = sectionSecond.getInt("slot");
             try {
                 ItemStack rewardsItem = new ItemStack(Material.valueOf(sectionSecond.getString("item_type")));
                 ItemMeta meta = rewardsItem.getItemMeta();
@@ -67,7 +67,6 @@ public class RewardManager implements Listener {
                 for (String lores : sectionSecond.getStringList("lore")){
                     rewardLoreList.add(ChatColor.translateAlternateColorCodes('&', lores));
                 }
-                List<String> commandList = new ArrayList<>(sectionSecond.getStringList("commands"));
                 if (rewardsName != null) {
                     meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', rewardsName));
                 } else {
@@ -77,18 +76,12 @@ public class RewardManager implements Listener {
                 meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
                 rewardsItem.setItemMeta(meta);
                 rewards.put(slot, rewardsItem);
-                commands.put(slot, commandList);
             } catch (IllegalArgumentException e) {
                 e.printStackTrace();
             }
         }
         return rewards;
     }
-    public Map<Integer, List<String>> getCommandsMap() {
-        return commands;
-    }
-
-
 
     public void setGui(){
         this.dailyItem.putAll(getRewards("Rewards"));
