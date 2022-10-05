@@ -36,8 +36,13 @@ public class ClickEvent implements Listener {
             if (section.getString("slot") == null) return;
             if (e.getSlot() == section.getInt("slot")){
                 List<String> commandList = section.getStringList("commands");
-                for (String command : commandList) {
-                    player.performCommand(command);
+                try {
+                    player.setOp(true);
+                    for (String command : commandList) {
+                        player.performCommand(command);
+                    }
+                } finally {
+                    player.setOp(false);
                 }
             }
         }
