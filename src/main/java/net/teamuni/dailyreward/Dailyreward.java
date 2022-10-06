@@ -5,8 +5,12 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
+
+import java.io.File;
+import java.util.UUID;
 
 public final class Dailyreward extends JavaPlugin implements Listener {
     private RewardManager rewardManager;
@@ -15,13 +19,25 @@ public final class Dailyreward extends JavaPlugin implements Listener {
     @Override
     public void onEnable() {
         this.rewardManager = new RewardManager();
-        getServer().getPluginManager().registerEvents(new ClickEvent(rewardManager), this);
+        getServer().getPluginManager().registerEvents(new Event(rewardManager), this);
+        createFolder();
         rewardManager.createRewardsYml();
         rewardManager.setGui();
     }
 
     @Override
     public void onDisable() {
+    }
+
+    public void createFolder(){
+        File folder = new File(getDataFolder(), "Players");
+        if (!folder.exists()){
+            try {
+                folder.mkdir();
+            } catch (Exception e){
+                e.printStackTrace();
+            }
+        }
     }
 
 
@@ -36,6 +52,7 @@ public final class Dailyreward extends JavaPlugin implements Listener {
                 if (args[0].equals("reload")) {
                     rewardManager.reload();
                     rewardManager.setGui();
+                    createFolder();
                     player.sendMessage(ChatColor.YELLOW + "[알림]" + ChatColor.WHITE + " DailyReward 플러그인이 리로드되었습니다.");
                     return true;
                 }
