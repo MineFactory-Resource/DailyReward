@@ -36,6 +36,7 @@ public class RewardManager implements Listener {
 
     public void reload() {
         this.rewardsFile = YamlConfiguration.loadConfiguration(file);
+        setGuiItems();
     }
 
     /*
@@ -49,8 +50,8 @@ public class RewardManager implements Listener {
      */
 
     @NotNull
-    public Map<Integer, ItemStack> getRewards(String path){
-        ConfigurationSection section = this.rewardsFile.getConfigurationSection(path);
+    public Map<Integer, ItemStack> getRewards(){
+        ConfigurationSection section = this.rewardsFile.getConfigurationSection("Rewards");
         Map<Integer, ItemStack> rewards = new HashMap<>();
         Set<String> rewardsKeys = section.getKeys(false);
         if (rewardsKeys.isEmpty()) {
@@ -83,8 +84,8 @@ public class RewardManager implements Listener {
         return rewards;
     }
 
-    public void setGui(){
-        this.dailyItem.putAll(getRewards("Rewards"));
+    public void setGuiItems(){
+        this.dailyItem.putAll(getRewards());
         for (ItemStack itemStack : this.dailyItem.values()) {
             this.dailyItemMetaSet.add(itemStack.getItemMeta());
         }
