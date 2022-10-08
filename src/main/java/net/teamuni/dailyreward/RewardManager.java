@@ -49,7 +49,7 @@ public class RewardManager implements Listener {
      */
 
     @NotNull
-    public Map<Integer, ItemStack> getRewards(){
+    public Map<Integer, ItemStack> getRewards() {
         ConfigurationSection section = this.rewardsFile.getConfigurationSection("Rewards");
         Map<Integer, ItemStack> rewards = new HashMap<>();
         Set<String> rewardsKeys = section.getKeys(false);
@@ -64,7 +64,7 @@ public class RewardManager implements Listener {
                 ItemMeta meta = rewardsItem.getItemMeta();
                 String rewardsName = sectionSecond.getString("name");
                 List<String> rewardLoreList = new ArrayList<>();
-                for (String lores : sectionSecond.getStringList("lore")){
+                for (String lores : sectionSecond.getStringList("lore")) {
                     rewardLoreList.add(ChatColor.translateAlternateColorCodes('&', lores));
                 }
                 if (rewardsName != null) {
@@ -83,12 +83,12 @@ public class RewardManager implements Listener {
         return rewards;
     }
 
-    public void setGuiItems(){
+    public void setGuiItems() {
         this.dailyItem.putAll(getRewards());
         for (ItemStack itemStack : this.dailyItem.values()) {
             this.dailyItemMetaSet.add(itemStack.getItemMeta());
         }
-        for (Map.Entry<Integer, ItemStack> dailyitems : this.dailyItem.entrySet()){
+        for (Map.Entry<Integer, ItemStack> dailyitems : this.dailyItem.entrySet()) {
             this.dailyRewardGui.setItem(dailyitems.getKey(), dailyitems.getValue());
         }
     }

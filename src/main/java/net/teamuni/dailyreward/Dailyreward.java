@@ -31,11 +31,11 @@ public final class Dailyreward extends JavaPlugin implements Listener {
     @Override
     public void onDisable() {
     }
-    public YamlConfiguration rewardsYmlLoad(){
+
+    public YamlConfiguration rewardsYmlLoad() {
         File file = new File(this.getDataFolder(), "rewards.yml");
         return YamlConfiguration.loadConfiguration(file);
     }
-
 
 
     @Override

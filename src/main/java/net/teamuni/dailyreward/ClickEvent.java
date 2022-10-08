@@ -12,7 +12,7 @@ import java.util.List;
 public class ClickEvent implements Listener {
     private final Dailyreward dailyreward = Dailyreward.getPlugin(Dailyreward.class);
 
-    public ClickEvent(Dailyreward dailyreward){
+    public ClickEvent(Dailyreward dailyreward) {
     }
 
     public ConfigurationSection loadConfiguration() {
