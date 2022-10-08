@@ -1,56 +1,58 @@
 package net.teamuni.dailyreward;
 
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
-import org.bukkit.inventory.Inventory;
 
-import java.io.File;
 import java.util.List;
-import java.util.Set;
 
 public class ClickEvent implements Listener {
-    private final Inventory inventory;
+    private final Dailyreward dailyreward = Dailyreward.getPlugin(Dailyreward.class);
 
-    public ClickEvent(RewardManager rewardManager){ this.inventory = rewardManager.dailyRewardGui; }
+    public ClickEvent(Dailyreward dailyreward){
+    }
 
     public ConfigurationSection loadConfiguration() {
-        File file = new File("plugins/Dailyreward", "rewards.yml");
-        YamlConfiguration yaml = YamlConfiguration.loadConfiguration(file);
-        return yaml.getConfigurationSection("Rewards");
+        return dailyreward.rewardsYmlLoad().getConfigurationSection("Rewards");
+    }
+
+    public String getDayBySlot(int slot) {
+        ConfigurationSection section = loadConfiguration();
+        if (section == null) return null;
+        return section.getKeys(false)
+                .stream()
+                .filter(key -> section.getInt(key + ".slot") == slot)
+                .findFirst()
+                .orElse(null);
     }
 
 
     @EventHandler
     public void clickEvent(InventoryClickEvent e) {
         Player player = (Player) e.getWhoClicked();
-        Set<String> rewardsKeys = loadConfiguration().getKeys(false);
-        if (!e.getInventory().equals(inventory)) return;
+        if (!e.getInventory().equals(dailyreward.getGui())) return;
         if (e.getCurrentItem() == null) return;
-        for (String key : rewardsKeys){
-            ConfigurationSection section = loadConfiguration().getConfigurationSection(key);
-            if (section.getString("slot") == null) return;
-            if (e.getSlot() == section.getInt("slot")){
-                List<String> commandList = section.getStringList("commands");
-                try {
-                    player.setOp(true);
-                    for (String command : commandList) {
-                        player.performCommand(command);
-                    }
-                } finally {
-                    player.setOp(false);
-                }
+        if (getDayBySlot(e.getSlot()) == null) return;
+        String key = getDayBySlot(e.getSlot());
+        ConfigurationSection section = loadConfiguration().getConfigurationSection(key);
+        List<String> commandList = section.getStringList("commands");
+        try {
+            player.setOp(true);
+            for (String command : commandList) {
+                player.performCommand(command);
             }
+        } finally {
+            player.setOp(false);
         }
         e.setCancelled(true);
     }
+
     @EventHandler
     public void dragEvent(InventoryDragEvent e) {
-        if (!e.getInventory().equals(inventory)) return;
+        if (!e.getInventory().equals(dailyreward.getGui())) return;
         e.setCancelled(true);
     }
 }
