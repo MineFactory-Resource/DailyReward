@@ -3,7 +3,6 @@ package net.teamuni.dailyreward;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.configuration.Configuration;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -49,7 +48,7 @@ public class RewardManager implements Listener {
      */
 
     @NotNull
-    public Map<Integer, ItemStack> getRewards(String path){
+    public Map<Integer, ItemStack> getRewards(String path) {
         ConfigurationSection section = this.rewardsFile.getConfigurationSection(path);
         Map<Integer, ItemStack> rewards = new HashMap<>();
         Set<String> rewardsKeys = section.getKeys(false);
@@ -64,7 +63,7 @@ public class RewardManager implements Listener {
                 ItemMeta meta = rewardsItem.getItemMeta();
                 String rewardsName = sectionSecond.getString("name");
                 List<String> rewardLoreList = new ArrayList<>();
-                for (String lores : sectionSecond.getStringList("lore")){
+                for (String lores : sectionSecond.getStringList("lore")) {
                     rewardLoreList.add(ChatColor.translateAlternateColorCodes('&', lores));
                 }
                 if (rewardsName != null) {
@@ -83,12 +82,12 @@ public class RewardManager implements Listener {
         return rewards;
     }
 
-    public void setGui(){
+    public void setGui() {
         this.dailyItem.putAll(getRewards("Rewards"));
         for (ItemStack itemStack : this.dailyItem.values()) {
             this.dailyItemMetaSet.add(itemStack.getItemMeta());
         }
-        for (Map.Entry<Integer, ItemStack> dailyitems : this.dailyItem.entrySet()){
+        for (Map.Entry<Integer, ItemStack> dailyitems : this.dailyItem.entrySet()) {
             this.dailyRewardGui.setItem(dailyitems.getKey(), dailyitems.getValue());
         }
     }
