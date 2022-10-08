@@ -3,14 +3,14 @@ package net.teamuni.dailyreward;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
-import java.util.UUID;
 
 public final class Dailyreward extends JavaPlugin implements Listener {
     private RewardManager rewardManager;
@@ -19,7 +19,7 @@ public final class Dailyreward extends JavaPlugin implements Listener {
     @Override
     public void onEnable() {
         this.rewardManager = new RewardManager();
-        getServer().getPluginManager().registerEvents(new Event(rewardManager), this);
+        getServer().getPluginManager().registerEvents(new Event(this), this);
         createFolder();
         rewardManager.createRewardsYml();
         rewardManager.setGui();
@@ -27,6 +27,17 @@ public final class Dailyreward extends JavaPlugin implements Listener {
 
     @Override
     public void onDisable() {
+    }
+
+
+    public YamlConfiguration rewardsYmlLoad(){
+        File file = new File(this.getDataFolder(), "rewards.yml");
+        return YamlConfiguration.loadConfiguration(file);
+    }
+
+
+    public Inventory getGui() {
+        return rewardManager.dailyRewardGui;
     }
 
     public void createFolder(){
