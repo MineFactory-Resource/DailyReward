@@ -38,6 +38,10 @@ public class RewardManager implements Listener {
         setGuiItems();
     }
 
+    public FileConfiguration getrewardsFile() {
+        return this.rewardsFile;
+    }
+
     /*
     public void save() {
         try{
