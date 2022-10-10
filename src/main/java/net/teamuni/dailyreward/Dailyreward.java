@@ -3,6 +3,7 @@ package net.teamuni.dailyreward;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
@@ -32,9 +33,8 @@ public final class Dailyreward extends JavaPlugin implements Listener {
     public void onDisable() {
     }
 
-    public YamlConfiguration rewardsYmlLoad() {
-        File file = new File(this.getDataFolder(), "rewards.yml");
-        return YamlConfiguration.loadConfiguration(file);
+    public FileConfiguration rewardsYmlLoad() {
+        return rewardManager.getrewardsFile();
     }
 
 

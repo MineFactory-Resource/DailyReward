@@ -1,18 +1,22 @@
 package net.teamuni.dailyreward;
 
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
+import org.bukkit.inventory.Inventory;
 
 import java.util.List;
 
 public class ClickEvent implements Listener {
     private final Dailyreward dailyreward = Dailyreward.getPlugin(Dailyreward.class);
+    public Inventory inventory;
 
     public ClickEvent(Dailyreward dailyreward) {
+        this.inventory = dailyreward.getGui();
     }
 
     public ConfigurationSection loadConfiguration() {
@@ -33,7 +37,7 @@ public class ClickEvent implements Listener {
     @EventHandler
     public void clickEvent(InventoryClickEvent e) {
         Player player = (Player) e.getWhoClicked();
-        if (!e.getInventory().equals(dailyreward.getGui())) return;
+        if (!e.getInventory().equals(inventory)) return;
         if (e.getCurrentItem() == null) return;
         if (getDayBySlot(e.getSlot()) == null) return;
         String key = getDayBySlot(e.getSlot());
@@ -52,7 +56,7 @@ public class ClickEvent implements Listener {
 
     @EventHandler
     public void dragEvent(InventoryDragEvent e) {
-        if (!e.getInventory().equals(dailyreward.getGui())) return;
+        if (!e.getInventory().equals(inventory)) return;
         e.setCancelled(true);
     }
 }
