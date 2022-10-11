@@ -18,13 +18,16 @@ public final class Dailyreward extends JavaPlugin implements Listener {
     @Override
     public void onEnable() {
         this.rewardManager = new RewardManager();
-        getServer().getPluginManager().registerEvents(new ClickEvent(this), this);
         rewardManager.createRewardsYml();
         rewardManager.setGuiItems();
+        getServer().getPluginManager().registerEvents(new ClickEvent(this), this);
     }
 
     public Inventory getGui() {
         return rewardManager.dailyRewardGui;
+    }
+    public FileConfiguration getRewardsFileConfiguration(){
+        return rewardManager.getRewardsFile();
     }
 
     @Override

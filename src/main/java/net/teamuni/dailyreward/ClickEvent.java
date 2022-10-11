@@ -1,6 +1,7 @@
 package net.teamuni.dailyreward;
 
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -11,15 +12,16 @@ import org.bukkit.inventory.Inventory;
 import java.util.List;
 
 public class ClickEvent implements Listener {
-    private final RewardManager rewardManager = new RewardManager();
     public Inventory inventory;
+    public FileConfiguration rewardsFile;
 
     public ClickEvent(Dailyreward dailyreward) {
         this.inventory = dailyreward.getGui();
+        this.rewardsFile = dailyreward.getRewardsFileConfiguration();
     }
 
     public ConfigurationSection loadConfiguration() {
-        return rewardManager.getRewardsFile().getConfigurationSection("Rewards");
+        return rewardsFile.getConfigurationSection("Rewards");
     }
 
     public String getDayBySlot(int slot) {
