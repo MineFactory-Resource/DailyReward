@@ -68,8 +68,8 @@ public class Event implements Listener {
         }
         FileConfiguration playerfile = YamlConfiguration.loadConfiguration(file);
         if (e.getCurrentItem() == null) return;
-        if (getDayBySlot(e.getSlot()) == null) return;
         String key = getDayBySlot(e.getSlot());
+        if (key == null) return;
         ConfigurationSection section = loadConfiguration().getConfigurationSection(key);
         String rewardName = section.getString("name");
         List<String> commandList = section.getStringList("commands");
