@@ -62,7 +62,7 @@ public class Event implements Listener {
 
     @EventHandler
     public void clickEvent(InventoryClickEvent e) {
-        if (!e.getInventory().equals(inventory)) {
+        if (e.getInventory().equals(inventory)) {
             e.setCancelled(true);
             return;
         }
@@ -70,7 +70,6 @@ public class Event implements Listener {
         File file = new File("plugins/Dailyreward/Players", e.getWhoClicked().getUniqueId() + ".yml");
         if (!file.exists()) {
             createPlayerYml(e.getWhoClicked().getUniqueId());
-            e.setCancelled(true);
             return;
         }
         FileConfiguration playerfile = YamlConfiguration.loadConfiguration(file);
@@ -82,7 +81,6 @@ public class Event implements Listener {
         List<String> commandList = section.getStringList("commands");
         if (Objects.equals(playerfile.getString("Rewards.receivedRewards." + key), "received")) {
             player.sendMessage(ChatColor.YELLOW + "[알림] " + ChatColor.translateAlternateColorCodes('&', rewardName) + ChatColor.WHITE + " 을(를) 이미 수령하셨습니다!");
-            e.setCancelled(true);
             player.closeInventory();
             return;
         }
@@ -103,12 +101,11 @@ public class Event implements Listener {
             }
             player.closeInventory();
         }
-        e.setCancelled(true);
     }
 
     @EventHandler
     public void dragEvent(InventoryDragEvent e) {
-        if (!e.getInventory().equals(inventory)) return;
+        if (e.getInventory().equals(inventory)) return;
         e.setCancelled(true);
     }
 }
