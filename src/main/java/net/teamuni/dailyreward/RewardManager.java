@@ -14,7 +14,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.*;
 
 public class RewardManager implements Listener {
@@ -34,8 +33,13 @@ public class RewardManager implements Listener {
         this.rewardsFile = YamlConfiguration.loadConfiguration(file);
     }
 
+    public FileConfiguration getRewardsFile() {
+        return this.rewardsFile;
+    }
+
     public void reload() {
         this.rewardsFile = YamlConfiguration.loadConfiguration(file);
+        setGuiItems();
     }
 
     /*
@@ -49,27 +53,23 @@ public class RewardManager implements Listener {
      */
 
     @NotNull
-    public Map<Integer, ItemStack> getRewards(String path){
+    public Map<Integer, ItemStack> getRewards() {
+        ConfigurationSection section = this.rewardsFile.getConfigurationSection("Rewards");
         Map<Integer, ItemStack> rewards = new HashMap<>();
-        ConfigurationSection section = this.rewardsFile.getConfigurationSection(path);
         Set<String> rewardsKeys = section.getKeys(false);
         if (rewardsKeys.isEmpty()) {
             throw new IllegalArgumentException("rewards.yml 파일의 내용이 비어있습니다. rewards.yml파일을 확인해주세요.");
         }
         for (String key : rewardsKeys) {
             ConfigurationSection sectionSecond = section.getConfigurationSection(key);
-            int slot = section.getInt(key + ".slot");
+            int slot = sectionSecond.getInt("slot");
             try {
                 ItemStack rewardsItem = new ItemStack(Material.valueOf(sectionSecond.getString("item_type")));
                 ItemMeta meta = rewardsItem.getItemMeta();
                 String rewardsName = sectionSecond.getString("name");
                 List<String> rewardLoreList = new ArrayList<>();
-                List<String> commandList = new ArrayList<>();
-                for (String lores : sectionSecond.getStringList("lore")){
+                for (String lores : sectionSecond.getStringList("lore")) {
                     rewardLoreList.add(ChatColor.translateAlternateColorCodes('&', lores));
-                }
-                for (String commands : sectionSecond.getStringList("commands")){
-                    commandList.add(commands);
                 }
                 if (rewardsName != null) {
                     meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', rewardsName));
@@ -87,12 +87,12 @@ public class RewardManager implements Listener {
         return rewards;
     }
 
-    public void setGui(){
-        this.dailyItem.putAll(getRewards("Rewards"));
+    public void setGuiItems() {
+        this.dailyItem.putAll(getRewards());
         for (ItemStack itemStack : this.dailyItem.values()) {
             this.dailyItemMetaSet.add(itemStack.getItemMeta());
         }
-        for (Map.Entry<Integer, ItemStack> dailyitems : this.dailyItem.entrySet()){
+        for (Map.Entry<Integer, ItemStack> dailyitems : this.dailyItem.entrySet()) {
             this.dailyRewardGui.setItem(dailyitems.getKey(), dailyitems.getValue());
         }
     }
