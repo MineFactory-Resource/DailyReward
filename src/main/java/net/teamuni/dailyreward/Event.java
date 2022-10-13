@@ -58,6 +58,7 @@ public class Event implements Listener {
 
     @EventHandler
     public void clickEvent(InventoryClickEvent e) {
+        if (!e.getInventory().equals(dailyreward.getGui())) return;
         Player player = (Player) e.getWhoClicked();
         File file = new File("plugins/Dailyreward/Players", e.getWhoClicked().getUniqueId() + ".yml");
         if (!file.exists()) {
@@ -66,7 +67,6 @@ public class Event implements Listener {
             return;
         }
         FileConfiguration playerfile = YamlConfiguration.loadConfiguration(file);
-        if (!e.getInventory().equals(dailyreward.getGui())) return;
         if (e.getCurrentItem() == null) return;
         if (getDayBySlot(e.getSlot()) == null) return;
         String key = getDayBySlot(e.getSlot());
