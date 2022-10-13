@@ -62,7 +62,10 @@ public class Event implements Listener {
 
     @EventHandler
     public void clickEvent(InventoryClickEvent e) {
-        if (!e.getInventory().equals(inventory)) return;
+        if (!e.getInventory().equals(inventory)) {
+            e.setCancelled(true);
+            return;
+        }
         Player player = (Player) e.getWhoClicked();
         File file = new File("plugins/Dailyreward/Players", e.getWhoClicked().getUniqueId() + ".yml");
         if (!file.exists()) {
