@@ -10,6 +10,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.inventory.Inventory;
 
 import java.io.File;
 import java.io.IOException;
@@ -18,13 +19,16 @@ import java.util.Objects;
 import java.util.UUID;
 
 public class Event implements Listener {
-    private final Dailyreward dailyreward = Dailyreward.getPlugin(Dailyreward.class);
+    public Inventory inventory;
+    public FileConfiguration rewardsFile;
 
     public Event(Dailyreward dailyreward) {
+        this.inventory = dailyreward.getGui();
+        this.rewardsFile = dailyreward.getRewardsFileConfiguration();
     }
 
     public ConfigurationSection loadConfiguration() {
-        return dailyreward.rewardsYmlLoad().getConfigurationSection("Rewards");
+        return rewardsFile.getConfigurationSection("Rewards");
     }
 
     public String getDayBySlot(int slot) {
@@ -58,7 +62,7 @@ public class Event implements Listener {
 
     @EventHandler
     public void clickEvent(InventoryClickEvent e) {
-        if (!e.getInventory().equals(dailyreward.getGui())) return;
+        if (!e.getInventory().equals(inventory)) return;
         Player player = (Player) e.getWhoClicked();
         File file = new File("plugins/Dailyreward/Players", e.getWhoClicked().getUniqueId() + ".yml");
         if (!file.exists()) {
@@ -101,7 +105,7 @@ public class Event implements Listener {
 
     @EventHandler
     public void dragEvent(InventoryDragEvent e) {
-        if (!e.getInventory().equals(dailyreward.getGui())) return;
+        if (!e.getInventory().equals(inventory)) return;
         e.setCancelled(true);
     }
 }
