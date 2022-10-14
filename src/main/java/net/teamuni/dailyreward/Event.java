@@ -47,6 +47,7 @@ public class Event implements Listener {
         if (!file.exists()) {
             try {
                 playerfile.createSection("Rewards");
+                playerfile.createSection("Rewards.Days");
                 playerfile.createSection("Rewards.receivedRewards");
                 playerfile.save(file);
             } catch (Exception exception) {
