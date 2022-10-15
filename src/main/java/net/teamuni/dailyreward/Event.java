@@ -64,7 +64,6 @@ public class Event implements Listener {
     public void clickEvent(InventoryClickEvent e) {
         if (e.getInventory().equals(inventory)) {
             e.setCancelled(true);
-            return;
         }
         Player player = (Player) e.getWhoClicked();
         File file = new File("plugins/Dailyreward/Players", e.getWhoClicked().getUniqueId() + ".yml");
@@ -105,7 +104,8 @@ public class Event implements Listener {
 
     @EventHandler
     public void dragEvent(InventoryDragEvent e) {
-        if (e.getInventory().equals(inventory)) return;
-        e.setCancelled(true);
+        if (e.getInventory().equals(inventory)) {
+            e.setCancelled(true);
+        }
     }
 }
