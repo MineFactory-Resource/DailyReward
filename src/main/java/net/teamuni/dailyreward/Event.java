@@ -99,6 +99,11 @@ public class Event implements Listener {
         if (e.getCurrentItem() == null) return;
         String key = getDayBySlot(e.getSlot());
         if (key == null) return;
+        int keyDay = Integer.parseInt(key.replaceAll("[^0-9]",""));
+        if (keyDay > playerfile.getInt("Rewards.Days")){
+            player.sendMessage(ChatColor.YELLOW + "[알림] " + ChatColor.WHITE + " 아직 해당 일차의 보상을 수령할 수 없습니다!");
+            return;
+        }
         ConfigurationSection section = loadConfiguration().getConfigurationSection(key);
         String rewardName = section.getString("name");
         List<String> commandList = section.getStringList("commands");
