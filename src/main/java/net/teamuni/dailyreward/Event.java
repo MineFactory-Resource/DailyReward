@@ -77,6 +77,8 @@ public class Event implements Listener {
         LocalDate LastJoinDate = LocalDate.parse(playerfile.getString("Rewards.LastJoinDate"), DateTimeFormatter.ISO_DATE);
         if (!Objects.equals(LastJoinDate, curDate)){
             try{
+                String formatDate = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+                playerfile.set("Rewards.LastJoinDate", formatDate);
                 playerfile.set("Rewards.Days", playerDays + 1);
                 playerfile.save(file);
             } catch (Exception exception) {

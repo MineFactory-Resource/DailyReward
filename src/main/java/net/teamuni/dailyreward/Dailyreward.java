@@ -1,16 +1,22 @@
 package net.teamuni.dailyreward;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 
 public final class Dailyreward extends JavaPlugin implements Listener {
     private RewardManager rewardManager;
@@ -22,7 +28,32 @@ public final class Dailyreward extends JavaPlugin implements Listener {
         createFolder();
         rewardManager.createRewardsYml();
         rewardManager.setGui();
+        midnightCheck();
         getServer().getPluginManager().registerEvents(new Event(this), this);
+    }
+
+    public void midnightCheck() {
+        LocalTime midnightTime = LocalTime.of(0, 0);
+        new BukkitRunnable(){
+            @Override
+            public void run() {
+                LocalTime curTime = LocalTime.now();
+                if(curTime.equals(midnightTime)) {
+                    Bukkit.getOnlinePlayers().forEach(player -> {
+                        File file = new File("plugins/Dailyreward/Players", player.getUniqueId() + ".yml");
+                        FileConfiguration playerfile = YamlConfiguration.loadConfiguration(file);
+                        try {
+                            String formatDate = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+                            playerfile.set("Rewards.LastJoinDate", formatDate);
+                            playerfile.set("Rewards.Days", playerfile.getInt("Rewards.Days") + 1);
+                            playerfile.save(file);
+                        } catch (Exception exception) {
+                            exception.printStackTrace();
+                        }
+                    });
+                }
+            }
+        }.runTaskTimerAsynchronously(this, 0L, 20L);
     }
 
     public Inventory getGui() {
