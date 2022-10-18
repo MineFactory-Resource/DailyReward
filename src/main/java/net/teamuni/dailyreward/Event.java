@@ -68,8 +68,8 @@ public class Event implements Listener {
         createPlayerYml(player.getUniqueId());
         File file = new File("plugins/Dailyreward/Players", player.getUniqueId() + ".yml");
         FileConfiguration playerfile = YamlConfiguration.loadConfiguration(file);
-        int playerDays = playerfile.getInt("Rewards.Days");
         LocalDate curDate = LocalDate.now();
+        LocalDate monthLastDate = curDate.withDayOfMonth(curDate.lengthOfMonth());
         if (playerfile.getString("Rewards.LastJoinDate") == null){
             player.sendMessage(ChatColor.YELLOW + "[알림] " + ChatColor.WHITE + "DailyRewards 플러그인의 플레이어 UUID YAML파일에서 문제가 발생했습니다. 관리자에게 문의해주세요.");
             return;
@@ -79,7 +79,11 @@ public class Event implements Listener {
             try{
                 String formatDate = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
                 playerfile.set("Rewards.LastJoinDate", formatDate);
-                playerfile.set("Rewards.Days", playerDays + 1);
+                if (LastJoinDate.isAfter(monthLastDate)) {
+                    playerfile.set("Rewards.Days", playerfile.getInt("Rewards.Days") + 1);
+                } else {
+                    playerfile.set("Rewards.Days", 1);
+                }
                 playerfile.save(file);
             } catch (Exception exception) {
                 exception.printStackTrace();

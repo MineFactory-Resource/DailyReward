@@ -37,6 +37,8 @@ public final class Dailyreward extends JavaPlugin implements Listener {
         new BukkitRunnable(){
             @Override
             public void run() {
+                LocalDate curdate = LocalDate.now();
+                LocalDate MonthlastDate = curdate.withDayOfMonth(curdate.lengthOfMonth());
                 LocalTime curTime = LocalTime.now();
                 if(curTime.equals(midnightTime)) {
                     Bukkit.getOnlinePlayers().forEach(player -> {
@@ -45,7 +47,12 @@ public final class Dailyreward extends JavaPlugin implements Listener {
                         try {
                             String formatDate = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
                             playerfile.set("Rewards.LastJoinDate", formatDate);
-                            playerfile.set("Rewards.Days", playerfile.getInt("Rewards.Days") + 1);
+                            LocalDate LastJoinDate = LocalDate.parse(playerfile.getString("Rewards.LastJoinDate"), DateTimeFormatter.ISO_DATE);
+                            if (LastJoinDate.isAfter(MonthlastDate)) {
+                                playerfile.set("Rewards.Days", playerfile.getInt("Rewards.Days") + 1);
+                            } else {
+                                playerfile.set("Rewards.Days",1);
+                            }
                             playerfile.save(file);
                         } catch (Exception exception) {
                             exception.printStackTrace();
