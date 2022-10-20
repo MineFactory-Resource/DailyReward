@@ -15,8 +15,6 @@ import org.bukkit.inventory.Inventory;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
 
 public class Event implements Listener {
     public Inventory inventory;
@@ -41,44 +39,31 @@ public class Event implements Listener {
                 .orElse(null);
     }
 
-    public void createPlayerYml(UUID Uuid) {
-        File file = new File("plugins/Dailyreward/Players", Uuid + ".yml");
-        FileConfiguration playerfile = YamlConfiguration.loadConfiguration(file);
-        if (!file.exists()) {
-            try {
-                playerfile.createSection("Rewards");
-                playerfile.createSection("Rewards.receivedRewards");
-                playerfile.save(file);
-            } catch (Exception exception) {
-                exception.printStackTrace();
-            }
-        }
+    @EventHandler
+    public void joinEvent(PlayerJoinEvent event) {
+        PlayerDataManager pdm = new PlayerDataManager();
+        pdm.createPlayerYml(event.getPlayer().getUniqueId());
     }
 
     @EventHandler
-    public void joinEvent(PlayerJoinEvent e) {
-        createPlayerYml(e.getPlayer().getUniqueId());
-    }
-
-    @EventHandler
-    public void clickEvent(InventoryClickEvent e) {
-        if (e.getInventory().equals(inventory)) {
-            e.setCancelled(true);
-        }
-        Player player = (Player) e.getWhoClicked();
-        File file = new File("plugins/Dailyreward/Players", e.getWhoClicked().getUniqueId() + ".yml");
+    public void clickEvent(InventoryClickEvent event) {
+        if (!event.getInventory().equals(inventory)) return;
+        event.setCancelled(true);
+        if (event.getCurrentItem() == null) return;
+        String key = getDayBySlot(event.getSlot());
+        if (key == null) return;
+        Player player = (Player) event.getWhoClicked();
+        File file = new File("plugins/Dailyreward/Players", player.getUniqueId() + ".yml");
         if (!file.exists()) {
-            createPlayerYml(e.getWhoClicked().getUniqueId());
+            player.sendMessage(ChatColor.YELLOW + "[알림] " + ChatColor.WHITE + " 플레이어의 데이터파일이 존재하지 않습니다! 서버에 나갔다가 다시 접속해주세요!");
             return;
         }
-        FileConfiguration playerfile = YamlConfiguration.loadConfiguration(file);
-        if (e.getCurrentItem() == null) return;
-        String key = getDayBySlot(e.getSlot());
-        if (key == null) return;
+        FileConfiguration playerFile = YamlConfiguration.loadConfiguration(file);
+        List<String> rewardList = playerFile.getStringList("ReceivedRewards");
         ConfigurationSection section = loadConfiguration().getConfigurationSection(key);
         String rewardName = section.getString("name");
         List<String> commandList = section.getStringList("commands");
-        if (Objects.equals(playerfile.getString("Rewards.receivedRewards." + key), "received")) {
+        if (rewardList.contains(key)) {
             player.sendMessage(ChatColor.YELLOW + "[알림] " + ChatColor.translateAlternateColorCodes('&', rewardName) + ChatColor.WHITE + " 을(를) 이미 수령하셨습니다!");
             player.closeInventory();
             return;
@@ -92,9 +77,9 @@ public class Event implements Listener {
             player.setOp(false);
             player.sendMessage(ChatColor.YELLOW + "[알림] " + ChatColor.translateAlternateColorCodes('&', rewardName) + ChatColor.WHITE + " 을(를) 수령했습니다!");
             try {
-                playerfile.createSection("Rewards.receivedRewards." + key);
-                playerfile.set("Rewards.receivedRewards." + key, "received");
-                playerfile.save(file);
+                rewardList.add(key);
+                playerFile.set("ReceivedRewards", rewardList);
+                playerFile.save(file);
             } catch (IOException exception) {
                 exception.printStackTrace();
             }
