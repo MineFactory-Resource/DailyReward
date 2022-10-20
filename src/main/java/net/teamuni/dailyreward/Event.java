@@ -14,7 +14,10 @@ import org.bukkit.inventory.Inventory;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Objects;
 
 public class Event implements Listener {
     public Inventory inventory;
@@ -25,12 +28,12 @@ public class Event implements Listener {
         this.rewardsFile = dailyreward.getRewardsFileConfiguration();
     }
 
-    public ConfigurationSection loadConfiguration() {
+    public ConfigurationSection loadConfigurationSection() {
         return rewardsFile.getConfigurationSection("Rewards");
     }
 
     public String getDayBySlot(int slot) {
-        ConfigurationSection section = loadConfiguration();
+        ConfigurationSection section = loadConfigurationSection();
         if (section == null) return null;
         return section.getKeys(false)
                 .stream()
@@ -41,8 +44,31 @@ public class Event implements Listener {
 
     @EventHandler
     public void joinEvent(PlayerJoinEvent event) {
-        PlayerDataManager pdm = new PlayerDataManager();
-        pdm.createPlayerYml(event.getPlayer().getUniqueId());
+        File file = new File("plugins/Dailyreward/Players", event.getPlayer().getUniqueId() + ".yml");
+        FileConfiguration playerFile = YamlConfiguration.loadConfiguration(file);
+        String formatDate = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        if (!file.exists()) {
+            PlayerDataManager pdm = new PlayerDataManager();
+            pdm.createPlayerYml(event.getPlayer().getUniqueId());
+            try {
+                playerFile.set("LastJoinDate", formatDate);
+                playerFile.save(file);
+            } catch (IOException exception) {
+                exception.printStackTrace();
+            }
+            return;
+        }
+        if (!Objects.equals(playerFile.getString("LastJoinDate"), formatDate)) {
+            int cumulativeDate = playerFile.getInt("CumulativeDate");
+            try {
+                playerFile.set("LastJoinDate", formatDate);
+                playerFile.set("CumulativeDate", cumulativeDate + 1);
+                playerFile.save(file);
+            } catch (IOException exception) {
+                exception.printStackTrace();
+            }
+
+        }
     }
 
     @EventHandler
@@ -65,7 +91,7 @@ public class Event implements Listener {
             return;
         }
         List<String> rewardList = playerFile.getStringList("ReceivedRewards");
-        ConfigurationSection section = loadConfiguration().getConfigurationSection(key);
+        ConfigurationSection section = loadConfigurationSection().getConfigurationSection(key);
         String rewardName = section.getString("name");
         List<String> commandList = section.getStringList("commands");
         if (rewardList.contains(key)) {
