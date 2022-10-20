@@ -59,6 +59,11 @@ public class Event implements Listener {
             return;
         }
         FileConfiguration playerFile = YamlConfiguration.loadConfiguration(file);
+        int keyDay = Integer.parseInt(key.replaceAll("\\D",""));
+        if (keyDay > playerFile.getInt("CumulativeDate")){
+            player.sendMessage(ChatColor.YELLOW + "[알림] " + ChatColor.WHITE + " 아직 해당 일차의 보상을 수령할 수 없습니다!");
+            return;
+        }
         List<String> rewardList = playerFile.getStringList("ReceivedRewards");
         ConfigurationSection section = loadConfiguration().getConfigurationSection(key);
         String rewardName = section.getString("name");
