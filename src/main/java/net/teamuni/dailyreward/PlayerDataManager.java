@@ -12,8 +12,10 @@ public class PlayerDataManager {
         FileConfiguration playerfile = YamlConfiguration.loadConfiguration(file);
         if (!file.exists()) {
             try {
-                playerfile.createSection("Rewards");
-                playerfile.createSection("Rewards.receivedRewards");
+                playerfile.createSection("CumulativeDate");
+                playerfile.createSection("LastJoinDate");
+                playerfile.createSection("ReceivedRewards");
+                playerfile.set("CumulativeDate", 1);
                 playerfile.save(file);
             } catch (Exception exception) {
                 exception.printStackTrace();
