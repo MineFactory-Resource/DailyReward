@@ -9,14 +9,14 @@ import java.util.UUID;
 public class PlayerDataManager {
     public void createPlayerYml(UUID Uuid) {
         File file = new File("plugins/Dailyreward/Players", Uuid + ".yml");
-        FileConfiguration playerfile = YamlConfiguration.loadConfiguration(file);
+        FileConfiguration playerFile = YamlConfiguration.loadConfiguration(file);
         if (!file.exists()) {
             try {
-                playerfile.createSection("CumulativeDate");
-                playerfile.createSection("LastJoinDate");
-                playerfile.createSection("ReceivedRewards");
-                playerfile.set("CumulativeDate", 0);
-                playerfile.save(file);
+                playerFile.createSection("CumulativeDate");
+                playerFile.createSection("LastJoinDate");
+                playerFile.createSection("ReceivedRewards");
+                playerFile.set("CumulativeDate", 0);
+                playerFile.save(file);
             } catch (Exception exception) {
                 exception.printStackTrace();
             }
