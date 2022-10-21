@@ -58,8 +58,6 @@ public final class Dailyreward extends JavaPlugin implements Listener {
             if (args.length > 0) {
                 if (args[0].equals("reload")) {
                     rewardManager.reload();
-                    rewardManager.setGui();
-                    createFolder();
                     player.sendMessage(ChatColor.YELLOW + "[알림]" + ChatColor.WHITE + " DailyReward 플러그인이 리로드되었습니다.");
                     return true;
                 }
