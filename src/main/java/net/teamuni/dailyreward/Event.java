@@ -86,6 +86,7 @@ public class Event implements Listener {
         }
         List<String> rewardList = playerFile.getStringList("ReceivedRewards");
         ConfigurationSection section = loadConfigurationSection().getConfigurationSection(key);
+        if (section == null) return;
         String rewardName = section.getString("name");
         List<String> commandList = section.getStringList("commands");
         if (rewardList.contains(key)) {
