@@ -18,6 +18,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 
 public class Event implements Listener {
     public Inventory inventory;
@@ -44,20 +45,14 @@ public class Event implements Listener {
 
     @EventHandler
     public void joinEvent(PlayerJoinEvent event) {
-        File file = new File("plugins/Dailyreward/Players", event.getPlayer().getUniqueId() + ".yml");
-        FileConfiguration playerFile = YamlConfiguration.loadConfiguration(file);
+        UUID uuid = event.getPlayer().getUniqueId();
         String formatDate = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        File file = new File("plugins/Dailyreward/Players", uuid + ".yml");
         if (!file.exists()) {
             PlayerDataManager pdm = new PlayerDataManager();
-            pdm.createPlayerYml(event.getPlayer().getUniqueId());
-            try {
-                playerFile.set("LastJoinDate", formatDate);
-                playerFile.save(file);
-            } catch (IOException exception) {
-                exception.printStackTrace();
-            }
-            return;
+            pdm.createPlayerYml(uuid);
         }
+        FileConfiguration playerFile = YamlConfiguration.loadConfiguration(file);
         if (!Objects.equals(playerFile.getString("LastJoinDate"), formatDate)) {
             int cumulativeDate = playerFile.getInt("CumulativeDate");
             try {
@@ -67,7 +62,6 @@ public class Event implements Listener {
             } catch (IOException exception) {
                 exception.printStackTrace();
             }
-
         }
     }
 

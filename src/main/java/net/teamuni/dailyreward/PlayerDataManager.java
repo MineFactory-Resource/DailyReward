@@ -15,7 +15,7 @@ public class PlayerDataManager {
                 playerfile.createSection("CumulativeDate");
                 playerfile.createSection("LastJoinDate");
                 playerfile.createSection("ReceivedRewards");
-                playerfile.set("CumulativeDate", 1);
+                playerfile.set("CumulativeDate", 0);
                 playerfile.save(file);
             } catch (Exception exception) {
                 exception.printStackTrace();
