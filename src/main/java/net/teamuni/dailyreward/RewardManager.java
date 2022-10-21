@@ -88,8 +88,8 @@ public class RewardManager implements Listener {
 
     public void setGui() {
         this.dailyItem.putAll(getRewards("Rewards"));
-        for (Map.Entry<Integer, ItemStack> dailyitems : this.dailyItem.entrySet()) {
-            this.dailyRewardGui.setItem(dailyitems.getKey(), dailyitems.getValue());
+        for (Map.Entry<Integer, ItemStack> dailyItems : this.dailyItem.entrySet()) {
+            this.dailyRewardGui.setItem(dailyItems.getKey(), dailyItems.getValue());
         }
     }
 }
