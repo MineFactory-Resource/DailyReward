@@ -10,28 +10,49 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.File;
 
 public final class Dailyreward extends JavaPlugin implements Listener {
     private RewardManager rewardManager;
+    public Dailyreward plugin;
+
 
 
     @Override
     public void onEnable() {
         this.rewardManager = new RewardManager();
+        createFolder();
         rewardManager.createRewardsYml();
-        rewardManager.setGuiItems();
-        getServer().getPluginManager().registerEvents(new ClickEvent(this), this);
+        rewardManager.setGui();
+        getServer().getPluginManager().registerEvents(new Event(this), this);
+    }
+
+    public Dailyreward getPlugin(){
+        plugin = this;
+        return plugin;
     }
 
     public Inventory getGui() {
         return rewardManager.dailyRewardGui;
     }
-    public FileConfiguration getRewardsFileConfiguration(){
+
+    public FileConfiguration getRewardsFileConfiguration() {
         return rewardManager.getRewardsFile();
     }
 
     @Override
     public void onDisable() {
+    }
+
+    public void createFolder() {
+        File folder = new File(getDataFolder(), "Players");
+        if (!folder.exists()) {
+            try {
+                folder.mkdir();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
 

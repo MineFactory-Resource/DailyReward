@@ -19,7 +19,6 @@ import java.util.*;
 public class RewardManager implements Listener {
     private final Dailyreward main = Dailyreward.getPlugin(Dailyreward.class);
     private final Map<Integer, ItemStack> dailyItem = new HashMap<>();
-    private final Set<ItemMeta> dailyItemMetaSet = new HashSet<>();
     private File file = null;
     private FileConfiguration rewardsFile = null;
     public final Inventory dailyRewardGui = Bukkit.createInventory(null, 54, ChatColor.GREEN + "출석체크 GUI");
@@ -39,7 +38,7 @@ public class RewardManager implements Listener {
 
     public void reload() {
         this.rewardsFile = YamlConfiguration.loadConfiguration(file);
-        setGuiItems();
+        setGui();
     }
 
     /*
@@ -53,8 +52,8 @@ public class RewardManager implements Listener {
      */
 
     @NotNull
-    public Map<Integer, ItemStack> getRewards() {
-        ConfigurationSection section = this.rewardsFile.getConfigurationSection("Rewards");
+    public Map<Integer, ItemStack> getRewards(String path) {
+        ConfigurationSection section = this.rewardsFile.getConfigurationSection(path);
         Map<Integer, ItemStack> rewards = new HashMap<>();
         Set<String> rewardsKeys = section.getKeys(false);
         if (rewardsKeys.isEmpty()) {
@@ -87,13 +86,10 @@ public class RewardManager implements Listener {
         return rewards;
     }
 
-    public void setGuiItems() {
-        this.dailyItem.putAll(getRewards());
-        for (ItemStack itemStack : this.dailyItem.values()) {
-            this.dailyItemMetaSet.add(itemStack.getItemMeta());
-        }
-        for (Map.Entry<Integer, ItemStack> dailyitems : this.dailyItem.entrySet()) {
-            this.dailyRewardGui.setItem(dailyitems.getKey(), dailyitems.getValue());
+    public void setGui() {
+        this.dailyItem.putAll(getRewards("Rewards"));
+        for (Map.Entry<Integer, ItemStack> dailyItems : this.dailyItem.entrySet()) {
+            this.dailyRewardGui.setItem(dailyItems.getKey(), dailyItems.getValue());
         }
     }
 }
