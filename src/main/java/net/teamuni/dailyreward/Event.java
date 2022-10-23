@@ -24,10 +24,12 @@ import java.util.UUID;
 public class Event implements Listener {
     public Inventory inventory;
     public FileConfiguration rewardsFile;
+    public Dailyreward plugin;
 
     public Event(Dailyreward dailyreward) {
         this.inventory = dailyreward.getGui();
         this.rewardsFile = dailyreward.getRewardsFileConfiguration();
+        this.plugin = dailyreward.getPlugin();
     }
 
     public ConfigurationSection loadConfigurationSection() {
@@ -49,7 +51,7 @@ public class Event implements Listener {
         UUID uuid = event.getPlayer().getUniqueId();
         String formatDate = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         File file = new File("plugins/Dailyreward/Players", uuid + ".yml");
-        Bukkit.getScheduler().runTaskAsynchronously(Dailyreward.plugin, () -> {
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
             if (!file.exists()) {
                 try {
                     FileConfiguration playerFile = YamlConfiguration.loadConfiguration(file);

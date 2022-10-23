@@ -14,11 +14,8 @@ import java.io.File;
 
 public final class Dailyreward extends JavaPlugin implements Listener {
     private RewardManager rewardManager;
-    public static Dailyreward plugin;
+    public Dailyreward plugin;
 
-    {
-        plugin = this;
-    }
 
 
     @Override
@@ -28,6 +25,11 @@ public final class Dailyreward extends JavaPlugin implements Listener {
         rewardManager.createRewardsYml();
         rewardManager.setGui();
         getServer().getPluginManager().registerEvents(new Event(this), this);
+    }
+
+    public Dailyreward getPlugin(){
+        plugin = this;
+        return plugin;
     }
 
     public Inventory getGui() {
