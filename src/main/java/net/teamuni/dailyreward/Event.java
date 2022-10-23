@@ -49,29 +49,31 @@ public class Event implements Listener {
         UUID uuid = event.getPlayer().getUniqueId();
         String formatDate = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         File file = new File("plugins/Dailyreward/Players", uuid + ".yml");
-        if (!file.exists()) {
-            try {
-                FileConfiguration playerFile = YamlConfiguration.loadConfiguration(file);
-                playerFile.createSection("CumulativeDate");
-                playerFile.createSection("LastJoinDate");
-                playerFile.createSection("ReceivedRewards");
-                playerFile.set("CumulativeDate", 0);
-                playerFile.save(file);
-            } catch (Exception exception) {
-                exception.printStackTrace();
+        Bukkit.getScheduler().runTaskAsynchronously(Dailyreward.plugin, () -> {
+            if (!file.exists()) {
+                try {
+                    FileConfiguration playerFile = YamlConfiguration.loadConfiguration(file);
+                    playerFile.createSection("CumulativeDate");
+                    playerFile.createSection("LastJoinDate");
+                    playerFile.createSection("ReceivedRewards");
+                    playerFile.set("CumulativeDate", 0);
+                    playerFile.save(file);
+                } catch (Exception exception) {
+                    exception.printStackTrace();
+                }
             }
-        }
-        FileConfiguration playerFile = YamlConfiguration.loadConfiguration(file);
-        if (!Objects.equals(playerFile.getString("LastJoinDate"), formatDate)) {
-            int cumulativeDate = playerFile.getInt("CumulativeDate");
-            try {
-                playerFile.set("LastJoinDate", formatDate);
-                playerFile.set("CumulativeDate", cumulativeDate + 1);
-                playerFile.save(file);
-            } catch (IOException exception) {
-                exception.printStackTrace();
+            FileConfiguration playerFile = YamlConfiguration.loadConfiguration(file);
+            if (!Objects.equals(playerFile.getString("LastJoinDate"), formatDate)) {
+                int cumulativeDate = playerFile.getInt("CumulativeDate");
+                try {
+                    playerFile.set("LastJoinDate", formatDate);
+                    playerFile.set("CumulativeDate", cumulativeDate + 1);
+                    playerFile.save(file);
+                } catch (IOException exception) {
+                    exception.printStackTrace();
+                }
             }
-        }
+        });
     }
 
 
@@ -89,8 +91,8 @@ public class Event implements Listener {
             return;
         }
         FileConfiguration playerFile = YamlConfiguration.loadConfiguration(file);
-        int keyDay = Integer.parseInt(key.replaceAll("\\D",""));
-        if (keyDay > playerFile.getInt("CumulativeDate")){
+        int keyDay = Integer.parseInt(key.replaceAll("\\D", ""));
+        if (keyDay > playerFile.getInt("CumulativeDate")) {
             player.sendMessage(ChatColor.YELLOW + "[알림] " + ChatColor.WHITE + " 아직 해당 일차의 보상을 수령할 수 없습니다!");
             return;
         }

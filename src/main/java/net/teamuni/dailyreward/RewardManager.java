@@ -31,6 +31,7 @@ public class RewardManager implements Listener {
         }
         this.rewardsFile = YamlConfiguration.loadConfiguration(file);
     }
+
     public FileConfiguration getRewardsFile() {
         return this.rewardsFile;
     }

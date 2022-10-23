@@ -14,6 +14,11 @@ import java.io.File;
 
 public final class Dailyreward extends JavaPlugin implements Listener {
     private RewardManager rewardManager;
+    public static Dailyreward plugin;
+
+    {
+        plugin = this;
+    }
 
 
     @Override
@@ -28,7 +33,8 @@ public final class Dailyreward extends JavaPlugin implements Listener {
     public Inventory getGui() {
         return rewardManager.dailyRewardGui;
     }
-    public FileConfiguration getRewardsFileConfiguration(){
+
+    public FileConfiguration getRewardsFileConfiguration() {
         return rewardManager.getRewardsFile();
     }
 
@@ -36,12 +42,12 @@ public final class Dailyreward extends JavaPlugin implements Listener {
     public void onDisable() {
     }
 
-    public void createFolder(){
+    public void createFolder() {
         File folder = new File(getDataFolder(), "Players");
-        if (!folder.exists()){
+        if (!folder.exists()) {
             try {
                 folder.mkdir();
-            } catch (Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
