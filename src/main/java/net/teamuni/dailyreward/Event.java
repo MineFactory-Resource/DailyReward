@@ -1,5 +1,6 @@
 package net.teamuni.dailyreward;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -49,8 +50,16 @@ public class Event implements Listener {
         String formatDate = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         File file = new File("plugins/Dailyreward/Players", uuid + ".yml");
         if (!file.exists()) {
-            PlayerDataManager pdm = new PlayerDataManager();
-            pdm.createPlayerYml(uuid);
+            try {
+                FileConfiguration playerFile = YamlConfiguration.loadConfiguration(file);
+                playerFile.createSection("CumulativeDate");
+                playerFile.createSection("LastJoinDate");
+                playerFile.createSection("ReceivedRewards");
+                playerFile.set("CumulativeDate", 0);
+                playerFile.save(file);
+            } catch (Exception exception) {
+                exception.printStackTrace();
+            }
         }
         FileConfiguration playerFile = YamlConfiguration.loadConfiguration(file);
         if (!Objects.equals(playerFile.getString("LastJoinDate"), formatDate)) {
@@ -64,6 +73,7 @@ public class Event implements Listener {
             }
         }
     }
+
 
     @EventHandler
     public void clickEvent(InventoryClickEvent event) {
