@@ -74,7 +74,7 @@ public class RewardManager implements Listener {
                 for (String lores : sectionSecond.getStringList("lore")) {
                     if(lores.contains("%rewards_receipt_status%")) {
                         if (keyDay > playerFile.getInt("CumulativeDate")) {
-                            String placeholderLore = lores.replace("%rewards_receipt_status%", String.valueOf(playerFile.getInt("CumulativeDate")));
+                            String placeholderLore = lores.replace("%rewards_receipt_status%", "아직 해당 일차보상을 획득할 수 없습니다.");
                             rewardLoreList.add(ChatColor.translateAlternateColorCodes('&', placeholderLore));
                         } else {
                             List<String> rewardList = playerFile.getStringList("ReceivedRewards");
