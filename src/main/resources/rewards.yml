@@ -1,9 +1,91 @@
 Rewards:
-  day1:
-    slot: 0
-    name: "&a1일차 보상"
+  day1: #day(1~54)
+    slot: 10 #0~53
+    name: "&a1일차 보상" #GUI 아이템의 이름
+    item_type: "EMERALD" #GUI 아이템의 타입
+    lore:
+      - "&e%rewards_receipt_status%" #%rewards_receipt_status% - 플레이어 데이터 파일값에 따라 바뀌는 아이템 수령 여부
+      - "&e보상 목록 :"
+      - "&f철괴 5개"
+      - "&f금괴 5개"
+    commands:
+      - "give @s minecraft:iron_ingot 5" #플레이어가 클릭했을때 실행되는 명령어, /는 빼고 입력.
+      - "give @s minecraft:gold_ingot 5"
+  day2:
+    slot: 11
+    name: "&a2일차 보상"
     item_type: "EMERALD"
     lore:
-      - ""
+      - "&e%rewards_receipt_status%"
+      - "&e보상 목록 :"
+      - "&f철괴 10개"
+      - "&f금괴 10개"
     commands:
-      - ""
+      - "give @s minecraft:iron_ingot 10"
+      - "give @s minecraft:gold_ingot 10"
+  day3:
+    slot: 12
+    name: "&a3일차 보상"
+    item_type: "EMERALD"
+    lore:
+      - "&e%rewards_receipt_status%"
+      - "&e보상 목록 :"
+      - "&f철괴 20개"
+      - "&f금괴 20개"
+    commands:
+      - "give @s minecraft:iron_ingot 20"
+      - "give @s minecraft:gold_ingot 20"
+  day4:
+    slot: 13
+    name: "&a4일차 보상"
+    item_type: "EMERALD"
+    lore:
+      - "&e%rewards_receipt_status%"
+      - "&e보상 목록 :"
+      - "&f철괴 30개"
+      - "&f금괴 30개"
+    commands:
+      - "give @s minecraft:iron_ingot 30"
+      - "give @s minecraft:gold_ingot 30"
+  day5:
+    slot: 14
+    name: "&a5일차 보상"
+    item_type: "EMERALD"
+    lore:
+      - "&e%rewards_receipt_status%"
+      - "&e보상 목록 :"
+      - "&f철괴 30개"
+      - "&f금괴 30개"
+      - "&f다이아몬드 5개"
+    commands:
+      - "give @s minecraft:iron_ingot 20"
+      - "give @s minecraft:gold_ingot 20"
+      - "give @s minecraft:diamond 5"
+  day6:
+    slot: 15
+    name: "&a6일차 보상"
+    item_type: "EMERALD"
+    lore:
+      - "&e%rewards_receipt_status%"
+      - "&e보상 목록 :"
+      - "&f철괴 30개"
+      - "&f금괴 30개"
+      - "&f다이아몬드 10개"
+    commands:
+      - "give @s minecraft:iron_ingot 20"
+      - "give @s minecraft:gold_ingot 20"
+      - "give @s minecraft:diamond 10"
+  day7:
+    slot: 16
+    name: "&a7일차 보상"
+    item_type: "EMERALD"
+    lore:
+      - "&e%rewards_receipt_status%"
+      - "&e보상 목록 :"
+      - "&f철괴 30개"
+      - "&f금괴 30개"
+      - "&f다이아몬드 15개"
+    commands:
+      - "give @s minecraft:iron_ingot 20"
+      - "give @s minecraft:gold_ingot 20"
+      - "give @s minecraft:diamond 15"
