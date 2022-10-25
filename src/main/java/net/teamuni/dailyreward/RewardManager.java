@@ -38,7 +38,6 @@ public class RewardManager implements Listener {
 
     public void reload() {
         this.rewardsFile = YamlConfiguration.loadConfiguration(file);
-        setGui();
     }
 
     /*
@@ -52,8 +51,7 @@ public class RewardManager implements Listener {
      */
 
     @NotNull
-    public Map<Integer, ItemStack> getRewards() {
-        UUID uuid = main.getPlayerUuid();
+    public Map<Integer, ItemStack> getRewards(UUID uuid) {
         File file = new File("plugins/Dailyreward/Players", uuid + ".yml");
         FileConfiguration playerFile = YamlConfiguration.loadConfiguration(file);
         ConfigurationSection section = this.rewardsFile.getConfigurationSection("Rewards");
@@ -106,8 +104,8 @@ public class RewardManager implements Listener {
         return rewards;
     }
 
-    public void setGui() {
-        this.dailyItem.putAll(getRewards());
+    public void setGui(UUID uuid) {
+        this.dailyItem.putAll(getRewards(uuid));
         for (Map.Entry<Integer, ItemStack> dailyItems : this.dailyItem.entrySet()) {
             this.dailyRewardGui.setItem(dailyItems.getKey(), dailyItems.getValue());
         }

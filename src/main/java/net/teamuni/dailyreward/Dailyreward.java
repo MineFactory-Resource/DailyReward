@@ -15,7 +15,6 @@ import java.util.UUID;
 
 public final class Dailyreward extends JavaPlugin implements Listener {
     private RewardManager rewardManager;
-    public UUID playerUuid;
     public Dailyreward plugin;
 
 
@@ -25,7 +24,6 @@ public final class Dailyreward extends JavaPlugin implements Listener {
         this.rewardManager = new RewardManager();
         createFolder();
         rewardManager.createRewardsYml();
-        rewardManager.setGui();
         getServer().getPluginManager().registerEvents(new Event(this), this);
     }
 
@@ -36,9 +34,6 @@ public final class Dailyreward extends JavaPlugin implements Listener {
 
     public Inventory getGui() {
         return rewardManager.dailyRewardGui;
-    }
-    public UUID getPlayerUuid() {
-        return playerUuid;
     }
 
     public FileConfiguration getRewardsFileConfiguration() {
@@ -65,8 +60,7 @@ public final class Dailyreward extends JavaPlugin implements Listener {
     public boolean onCommand(@NotNull CommandSender sender, Command cmd, @NotNull String label, String[] args) {
         Player player = (Player) sender;
         if (cmd.getName().equals("출석체크") && player.hasPermission("dailyreward.opengui")) {
-            playerUuid = player.getUniqueId();
-            rewardManager.setGui();
+            rewardManager.setGui(player.getUniqueId());
             player.openInventory(rewardManager.dailyRewardGui);
         }
         if (cmd.getName().equals("dailyreward") && player.hasPermission("dailyreward.reload")) {
