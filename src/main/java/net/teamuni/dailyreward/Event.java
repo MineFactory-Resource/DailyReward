@@ -25,6 +25,7 @@ public class Event implements Listener {
     public Inventory inventory;
     public FileConfiguration rewardsFile;
     public Dailyreward plugin;
+    public MessageManager messageManager = new MessageManager();
 
     public Event(Dailyreward dailyreward) {
         this.inventory = dailyreward.getGui();
@@ -89,13 +90,13 @@ public class Event implements Listener {
         Player player = (Player) event.getWhoClicked();
         File file = new File("plugins/Dailyreward/Players", player.getUniqueId() + ".yml");
         if (!file.exists()) {
-            player.sendMessage(ChatColor.YELLOW + "[알림] " + ChatColor.WHITE + " 플레이어의 데이터파일이 존재하지 않습니다! 서버에 나갔다가 다시 접속해주세요!");
+            player.sendMessage(ChatColor.translateAlternateColorCodes('&', messageManager.getMessage("Not_exists_player_file")));
             return;
         }
         FileConfiguration playerFile = YamlConfiguration.loadConfiguration(file);
         int keyDay = Integer.parseInt(key.replaceAll("\\D", ""));
         if (keyDay > playerFile.getInt("CumulativeDate")) {
-            player.sendMessage(ChatColor.YELLOW + "[알림] " + ChatColor.WHITE + " 아직 해당 일차의 보상을 수령할 수 없습니다!");
+            player.sendMessage(ChatColor.translateAlternateColorCodes('&', messageManager.getMessage("No_received_reward")));
             return;
         }
         List<String> rewardList = playerFile.getStringList("ReceivedRewards");
@@ -104,7 +105,8 @@ public class Event implements Listener {
         String rewardName = section.getString("name");
         List<String> commandList = section.getStringList("commands");
         if (rewardList.contains(key)) {
-            player.sendMessage(ChatColor.YELLOW + "[알림] " + ChatColor.translateAlternateColorCodes('&', rewardName) + ChatColor.WHITE + " 을(를) 이미 수령하셨습니다!");
+            String alreadyReceivedReward = (ChatColor.translateAlternateColorCodes('&', messageManager.getMessage("Already_received_reward")));
+            player.sendMessage(alreadyReceivedReward.replace("%rewardName%", rewardName));
             player.closeInventory();
             return;
         }
@@ -115,7 +117,8 @@ public class Event implements Listener {
             }
         } finally {
             player.setOp(false);
-            player.sendMessage(ChatColor.YELLOW + "[알림] " + ChatColor.translateAlternateColorCodes('&', rewardName) + ChatColor.WHITE + " 을(를) 수령했습니다!");
+            String receivedReward = (ChatColor.translateAlternateColorCodes('&', messageManager.getMessage("Already_received_reward")));
+            player.sendMessage(receivedReward.replace("%rewardName%", rewardName));
             try {
                 rewardList.add(key);
                 playerFile.set("ReceivedRewards", rewardList);

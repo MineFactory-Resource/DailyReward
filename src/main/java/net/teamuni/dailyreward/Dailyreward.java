@@ -71,11 +71,11 @@ public final class Dailyreward extends JavaPlugin implements Listener {
             if (args.length > 0) {
                 if (args[0].equals("reload")) {
                     rewardManager.reload();
-                    player.sendMessage(ChatColor.YELLOW + "[알림]" + ChatColor.WHITE + " DailyReward 플러그인이 리로드되었습니다.");
+                    player.sendMessage(ChatColor.translateAlternateColorCodes('&', messageManager.getMessage("Reload_message")));
                     return true;
                 }
             } else {
-                player.sendMessage(ChatColor.YELLOW + "[알림]" + ChatColor.WHITE + " 알 수 없는 명령어 입니다.");
+                player.sendMessage(ChatColor.translateAlternateColorCodes('&', messageManager.getMessage("Unknown_command")));
                 return true;
             }
         }
