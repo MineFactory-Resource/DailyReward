@@ -15,6 +15,7 @@ import java.util.UUID;
 
 public final class Dailyreward extends JavaPlugin implements Listener {
     private RewardManager rewardManager;
+    private MessageManager messageManager;
     public Dailyreward plugin;
 
 
@@ -22,8 +23,10 @@ public final class Dailyreward extends JavaPlugin implements Listener {
     @Override
     public void onEnable() {
         this.rewardManager = new RewardManager();
+        this.messageManager = new MessageManager();
         createFolder();
         rewardManager.createRewardsYml();
+        messageManager.createMessagesYml();
         getServer().getPluginManager().registerEvents(new Event(this), this);
     }
 
@@ -60,6 +63,7 @@ public final class Dailyreward extends JavaPlugin implements Listener {
     public boolean onCommand(@NotNull CommandSender sender, Command cmd, @NotNull String label, String[] args) {
         Player player = (Player) sender;
         if (cmd.getName().equals("출석체크") && player.hasPermission("dailyreward.opengui")) {
+            player.sendMessage(messageManager.getMessage("test"));
             rewardManager.setGui(player.getUniqueId());
             player.openInventory(rewardManager.dailyRewardGui);
         }
