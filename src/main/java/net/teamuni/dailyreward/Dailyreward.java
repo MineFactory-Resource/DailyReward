@@ -11,6 +11,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
+import java.util.UUID;
 
 public final class Dailyreward extends JavaPlugin implements Listener {
     private RewardManager rewardManager;
@@ -23,17 +24,12 @@ public final class Dailyreward extends JavaPlugin implements Listener {
         this.rewardManager = new RewardManager();
         createFolder();
         rewardManager.createRewardsYml();
-        rewardManager.setGui();
         getServer().getPluginManager().registerEvents(new Event(this), this);
     }
 
     public Dailyreward getPlugin(){
         plugin = this;
         return plugin;
-    }
-
-    public Inventory getGui() {
-        return rewardManager.dailyRewardGui;
     }
 
     public FileConfiguration getRewardsFileConfiguration() {
@@ -60,7 +56,7 @@ public final class Dailyreward extends JavaPlugin implements Listener {
     public boolean onCommand(@NotNull CommandSender sender, Command cmd, @NotNull String label, String[] args) {
         Player player = (Player) sender;
         if (cmd.getName().equals("출석체크") && player.hasPermission("dailyreward.opengui")) {
-            player.openInventory(rewardManager.dailyRewardGui);
+            rewardManager.openGui(player);
         }
         if (cmd.getName().equals("dailyreward") && player.hasPermission("dailyreward.reload")) {
             if (args.length > 0) {

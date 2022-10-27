@@ -27,7 +27,6 @@ public class Event implements Listener {
     public Dailyreward plugin;
 
     public Event(Dailyreward dailyreward) {
-        this.inventory = dailyreward.getGui();
         this.rewardsFile = dailyreward.getRewardsFileConfiguration();
         this.plugin = dailyreward.getPlugin();
     }
@@ -81,7 +80,7 @@ public class Event implements Listener {
 
     @EventHandler
     public void clickEvent(InventoryClickEvent event) {
-        if (!event.getInventory().equals(inventory)) return;
+        if (!event.getView().getTitle().equals(ChatColor.GREEN + "출석체크 GUI")) return;
         event.setCancelled(true);
         if (event.getCurrentItem() == null) return;
         String key = getDayBySlot(event.getSlot());
@@ -129,7 +128,7 @@ public class Event implements Listener {
 
     @EventHandler
     public void dragEvent(InventoryDragEvent e) {
-        if (e.getInventory().equals(inventory)) {
+        if (e.getView().getTitle().equals(ChatColor.GREEN + "출석체크 GUI")) {
             e.setCancelled(true);
         }
     }

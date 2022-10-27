@@ -6,6 +6,7 @@ import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
@@ -18,10 +19,8 @@ import java.util.*;
 
 public class RewardManager implements Listener {
     private final Dailyreward main = Dailyreward.getPlugin(Dailyreward.class);
-    private final Map<Integer, ItemStack> dailyItem = new HashMap<>();
     private File file = null;
     private FileConfiguration rewardsFile = null;
-    public final Inventory dailyRewardGui = Bukkit.createInventory(null, 54, ChatColor.GREEN + "출석체크 GUI");
 
     public void createRewardsYml() {
         this.file = new File(main.getDataFolder(), "rewards.yml");
@@ -38,7 +37,6 @@ public class RewardManager implements Listener {
 
     public void reload() {
         this.rewardsFile = YamlConfiguration.loadConfiguration(file);
-        setGui();
     }
 
     /*
@@ -52,8 +50,10 @@ public class RewardManager implements Listener {
      */
 
     @NotNull
-    public Map<Integer, ItemStack> getRewards(String path) {
-        ConfigurationSection section = this.rewardsFile.getConfigurationSection(path);
+    public Map<Integer, ItemStack> getRewards(UUID uuid) {
+        File file = new File("plugins/Dailyreward/Players", uuid + ".yml");
+        FileConfiguration playerFile = YamlConfiguration.loadConfiguration(file);
+        ConfigurationSection section = this.rewardsFile.getConfigurationSection("Rewards");
         Map<Integer, ItemStack> rewards = new HashMap<>();
         Set<String> rewardsKeys = section.getKeys(false);
         if (rewardsKeys.isEmpty()) {
@@ -61,6 +61,7 @@ public class RewardManager implements Listener {
         }
         for (String key : rewardsKeys) {
             ConfigurationSection sectionSecond = section.getConfigurationSection(key);
+            int keyDay = Integer.parseInt(key.replaceAll("\\D", ""));
             int slot = sectionSecond.getInt("slot");
             try {
                 ItemStack rewardsItem = new ItemStack(Material.valueOf(sectionSecond.getString("item_type")));
@@ -68,7 +69,23 @@ public class RewardManager implements Listener {
                 String rewardsName = sectionSecond.getString("name");
                 List<String> rewardLoreList = new ArrayList<>();
                 for (String lores : sectionSecond.getStringList("lore")) {
-                    rewardLoreList.add(ChatColor.translateAlternateColorCodes('&', lores));
+                    if(lores.contains("%rewards_receipt_status%")) {
+                        if (keyDay > playerFile.getInt("CumulativeDate")) {
+                            String placeholderLore = lores.replace("%rewards_receipt_status%", "아직 해당 일차보상을 획득할 수 없습니다.");
+                            rewardLoreList.add(ChatColor.translateAlternateColorCodes('&', placeholderLore));
+                        } else {
+                            List<String> rewardList = playerFile.getStringList("ReceivedRewards");
+                            if (rewardList.contains(key)) {
+                                String placeholderLore = lores.replace("%rewards_receipt_status%", "이미 해당 일차보상을 수령했습니다.");
+                                rewardLoreList.add(ChatColor.translateAlternateColorCodes('&', placeholderLore));
+                            } else {
+                                String placeholderLore = lores.replace("%rewards_receipt_status%", "해당 일차보상을 수령할 수 있습니다.");
+                                rewardLoreList.add(ChatColor.translateAlternateColorCodes('&', placeholderLore));
+                            }
+                        }
+                    } else {
+                        rewardLoreList.add(ChatColor.translateAlternateColorCodes('&', lores));
+                    }
                 }
                 if (rewardsName != null) {
                     meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', rewardsName));
@@ -86,10 +103,13 @@ public class RewardManager implements Listener {
         return rewards;
     }
 
-    public void setGui() {
-        this.dailyItem.putAll(getRewards("Rewards"));
-        for (Map.Entry<Integer, ItemStack> dailyItems : this.dailyItem.entrySet()) {
-            this.dailyRewardGui.setItem(dailyItems.getKey(), dailyItems.getValue());
+    public void openGui(Player player){
+        Inventory dailyRewardGui = Bukkit.createInventory(null, 54, ChatColor.GREEN + "출석체크 GUI");
+        Map<Integer, ItemStack> dailyItem = new HashMap<>(getRewards(player.getUniqueId()));
+        for (Map.Entry<Integer, ItemStack> dailyItems : dailyItem.entrySet()) {
+            dailyRewardGui.setItem(dailyItems.getKey(), dailyItems.getValue());
         }
+        player.openInventory(dailyRewardGui);
     }
 }
+
