@@ -19,10 +19,8 @@ import java.util.*;
 
 public class RewardManager implements Listener {
     private final Dailyreward main = Dailyreward.getPlugin(Dailyreward.class);
-    private final Map<Integer, ItemStack> dailyItem = new HashMap<>();
     private File file = null;
     private FileConfiguration rewardsFile = null;
-    public final Inventory dailyRewardGui = Bukkit.createInventory(null, 54, ChatColor.GREEN + "출석체크 GUI");
 
     public void createRewardsYml() {
         this.file = new File(main.getDataFolder(), "rewards.yml");
@@ -105,15 +103,13 @@ public class RewardManager implements Listener {
         return rewards;
     }
 
-    public void setGui(UUID uuid) {
-        this.dailyItem.putAll(getRewards(uuid));
-        for (Map.Entry<Integer, ItemStack> dailyItems : this.dailyItem.entrySet()) {
-            this.dailyRewardGui.setItem(dailyItems.getKey(), dailyItems.getValue());
-        }
-    }
-
     public void openGui(Player player){
-        setGui(player.getUniqueId());
-        player.openInventory(this.dailyRewardGui);
+        Inventory dailyRewardGui = Bukkit.createInventory(null, 54, ChatColor.GREEN + "출석체크 GUI");
+        Map<Integer, ItemStack> dailyItem = new HashMap<>(getRewards(player.getUniqueId()));
+        for (Map.Entry<Integer, ItemStack> dailyItems : dailyItem.entrySet()) {
+            dailyRewardGui.setItem(dailyItems.getKey(), dailyItems.getValue());
+        }
+        player.openInventory(dailyRewardGui);
     }
 }
+

@@ -32,10 +32,6 @@ public final class Dailyreward extends JavaPlugin implements Listener {
         return plugin;
     }
 
-    public Inventory getGui() {
-        return rewardManager.dailyRewardGui;
-    }
-
     public FileConfiguration getRewardsFileConfiguration() {
         return rewardManager.getRewardsFile();
     }
