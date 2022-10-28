@@ -3,6 +3,7 @@ Rewards:
     slot: 10 #0~53
     name: "&a1일차 보상" #GUI 아이템의 이름
     item_type: "EMERALD" #GUI 아이템의 타입
+    received_item_type: "BARRIER" #보상을 받으면 변경되는 GUI 아이템의 타입
     lore:
       - "&e%rewards_receipt_status%" #%rewards_receipt_status% - 플레이어 데이터 파일값에 따라 바뀌는 아이템 수령 여부
       - "&e보상 목록 :"
@@ -15,6 +16,7 @@ Rewards:
     slot: 11
     name: "&a2일차 보상"
     item_type: "EMERALD"
+    received_item_type: "BARRIER"
     lore:
       - "&e%rewards_receipt_status%"
       - "&e보상 목록 :"
@@ -27,6 +29,7 @@ Rewards:
     slot: 12
     name: "&a3일차 보상"
     item_type: "EMERALD"
+    received_item_type: "BARRIER"
     lore:
       - "&e%rewards_receipt_status%"
       - "&e보상 목록 :"
@@ -39,6 +42,7 @@ Rewards:
     slot: 13
     name: "&a4일차 보상"
     item_type: "EMERALD"
+    received_item_type: "BARRIER"
     lore:
       - "&e%rewards_receipt_status%"
       - "&e보상 목록 :"
@@ -51,6 +55,7 @@ Rewards:
     slot: 14
     name: "&a5일차 보상"
     item_type: "EMERALD"
+    received_item_type: "BARRIER"
     lore:
       - "&e%rewards_receipt_status%"
       - "&e보상 목록 :"
@@ -65,6 +70,7 @@ Rewards:
     slot: 15
     name: "&a6일차 보상"
     item_type: "EMERALD"
+    received_item_type: "BARRIER"
     lore:
       - "&e%rewards_receipt_status%"
       - "&e보상 목록 :"
@@ -79,6 +85,7 @@ Rewards:
     slot: 16
     name: "&a7일차 보상"
     item_type: "EMERALD"
+    received_item_type: "BARRIER"
     lore:
       - "&e%rewards_receipt_status%"
       - "&e보상 목록 :"
