@@ -56,6 +56,7 @@ public class RewardManager implements Listener {
         ConfigurationSection section = this.rewardsFile.getConfigurationSection("Rewards");
         Map<Integer, ItemStack> rewards = new HashMap<>();
         Set<String> rewardsKeys = section.getKeys(false);
+        List<String> rewardList = playerFile.getStringList("ReceivedRewards");
         if (rewardsKeys.isEmpty()) {
             throw new IllegalArgumentException("rewards.yml 파일의 내용이 비어있습니다. rewards.yml파일을 확인해주세요.");
         }
@@ -64,7 +65,12 @@ public class RewardManager implements Listener {
             int keyDay = Integer.parseInt(key.replaceAll("\\D", ""));
             int slot = sectionSecond.getInt("slot");
             try {
-                ItemStack rewardsItem = new ItemStack(Material.valueOf(sectionSecond.getString("item_type")));
+                ItemStack rewardsItem;
+                if (rewardList.contains(key)) {
+                    rewardsItem = new ItemStack(Material.valueOf(sectionSecond.getString("received_item_type")));
+                } else {
+                    rewardsItem = new ItemStack(Material.valueOf(sectionSecond.getString("item_type")));
+                }
                 ItemMeta meta = rewardsItem.getItemMeta();
                 String rewardsName = sectionSecond.getString("name");
                 List<String> rewardLoreList = new ArrayList<>();
@@ -74,14 +80,13 @@ public class RewardManager implements Listener {
                             String placeholderLore = lores.replace("%rewards_receipt_status%", "아직 해당 일차보상을 획득할 수 없습니다.");
                             rewardLoreList.add(ChatColor.translateAlternateColorCodes('&', placeholderLore));
                         } else {
-                            List<String> rewardList = playerFile.getStringList("ReceivedRewards");
+                            String placeholderLore;
                             if (rewardList.contains(key)) {
-                                String placeholderLore = lores.replace("%rewards_receipt_status%", "이미 해당 일차보상을 수령했습니다.");
-                                rewardLoreList.add(ChatColor.translateAlternateColorCodes('&', placeholderLore));
+                                placeholderLore = lores.replace("%rewards_receipt_status%", "이미 해당 일차보상을 수령했습니다.");
                             } else {
-                                String placeholderLore = lores.replace("%rewards_receipt_status%", "해당 일차보상을 수령할 수 있습니다.");
-                                rewardLoreList.add(ChatColor.translateAlternateColorCodes('&', placeholderLore));
+                                placeholderLore = lores.replace("%rewards_receipt_status%", "해당 일차보상을 수령할 수 있습니다.");
                             }
+                            rewardLoreList.add(ChatColor.translateAlternateColorCodes('&', placeholderLore));
                         }
                     } else {
                         rewardLoreList.add(ChatColor.translateAlternateColorCodes('&', lores));
