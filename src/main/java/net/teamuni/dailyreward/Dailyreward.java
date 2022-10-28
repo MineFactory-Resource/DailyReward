@@ -1,6 +1,7 @@
 package net.teamuni.dailyreward;
 
 import org.bukkit.ChatColor;
+import org.bukkit.Sound;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -57,6 +58,7 @@ public final class Dailyreward extends JavaPlugin implements Listener {
         Player player = (Player) sender;
         if (cmd.getName().equals("출석체크") && player.hasPermission("dailyreward.opengui")) {
             rewardManager.openGui(player);
+            player.playSound(player, Sound.BLOCK_CHEST_OPEN, 1,1);
         }
         if (cmd.getName().equals("dailyreward") && player.hasPermission("dailyreward.reload")) {
             if (args.length > 0) {
