@@ -2,6 +2,7 @@ package net.teamuni.dailyreward;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Sound;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -88,13 +89,17 @@ public class Event implements Listener {
         Player player = (Player) event.getWhoClicked();
         File file = new File("plugins/Dailyreward/Players", player.getUniqueId() + ".yml");
         if (!file.exists()) {
-            player.sendMessage(ChatColor.YELLOW + "[알림] " + ChatColor.WHITE + " 플레이어의 데이터파일이 존재하지 않습니다! 서버에 나갔다가 다시 접속해주세요!");
+            player.sendMessage(ChatColor.YELLOW + "[알림] " + ChatColor.WHITE + "플레이어의 데이터파일이 존재하지 않습니다! 서버에 나갔다가 다시 접속해주세요!");
+            player.playSound(player, Sound.ENTITY_VILLAGER_HURT, 1,1);
+            player.closeInventory();
             return;
         }
         FileConfiguration playerFile = YamlConfiguration.loadConfiguration(file);
         int keyDay = Integer.parseInt(key.replaceAll("\\D", ""));
         if (keyDay > playerFile.getInt("CumulativeDate")) {
-            player.sendMessage(ChatColor.YELLOW + "[알림] " + ChatColor.WHITE + " 아직 해당 일차의 보상을 수령할 수 없습니다!");
+            player.sendMessage(ChatColor.YELLOW + "[알림] " + ChatColor.WHITE + "아직 해당 일차의 보상을 수령할 수 없습니다!");
+            player.playSound(player, Sound.ENTITY_VILLAGER_NO, 1,(float) 1.5);
+            player.closeInventory();
             return;
         }
         List<String> rewardList = playerFile.getStringList("ReceivedRewards");
@@ -104,6 +109,7 @@ public class Event implements Listener {
         List<String> commandList = section.getStringList("commands");
         if (rewardList.contains(key)) {
             player.sendMessage(ChatColor.YELLOW + "[알림] " + ChatColor.translateAlternateColorCodes('&', rewardName) + ChatColor.WHITE + " 을(를) 이미 수령하셨습니다!");
+            player.playSound(player, Sound.ENTITY_VILLAGER_NO, 1,(float) 1.5);
             player.closeInventory();
             return;
         }
@@ -115,6 +121,7 @@ public class Event implements Listener {
         } finally {
             player.setOp(false);
             player.sendMessage(ChatColor.YELLOW + "[알림] " + ChatColor.translateAlternateColorCodes('&', rewardName) + ChatColor.WHITE + " 을(를) 수령했습니다!");
+            player.playSound(player, Sound.ENTITY_PLAYER_LEVELUP, 1,(float) 1.3);
             try {
                 rewardList.add(key);
                 playerFile.set("ReceivedRewards", rewardList);
