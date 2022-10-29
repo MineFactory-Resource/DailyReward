@@ -11,7 +11,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.inventory.Inventory;
 
 import java.io.File;
 import java.io.IOException;
@@ -22,7 +21,6 @@ import java.util.Objects;
 import java.util.UUID;
 
 public class Event implements Listener {
-    public Inventory inventory;
     public FileConfiguration rewardsFile;
     public Dailyreward plugin;
 
