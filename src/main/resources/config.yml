@@ -1,0 +1,5 @@
+Open_Gui_Sound: "BLOCK_CHEST_OPEN-1-1" #Sound-volume-pitch 형식으로 작성해주세요!
+Receive_Reward_Sound: "ENTITY_PLAYER_LEVELUP-1-1.3"
+Not_Enough_Day_Sound: "ENTITY_VILLAGER_NO-1-1.5"
+Already_Received_Reward_Sound: "ENTITY_VILLAGER_NO-1-1.5"
+Not_Exist_Player_File_Sound: "ENTITY_VILLAGER_HURT-1-1"
