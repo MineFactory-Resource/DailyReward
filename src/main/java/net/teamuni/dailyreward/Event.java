@@ -24,10 +24,18 @@ import java.util.UUID;
 public class Event implements Listener {
     public FileConfiguration rewardsFile;
     public Dailyreward plugin;
+    public String receivedRewardSound;
+    public String notEnoughDaySound;
+    public String alreadyReceivedRewardSound;
+    public String notExistPlayerFileSound;
 
     public Event(Dailyreward dailyreward) {
         this.rewardsFile = dailyreward.getRewardsFileConfiguration();
         this.plugin = dailyreward.getPlugin();
+        this.receivedRewardSound = dailyreward.getConfig().getString("Receive_Reward_Sound");
+        this.notEnoughDaySound = dailyreward.getConfig().getString("Not_Enough_Day_Sound");
+        this.alreadyReceivedRewardSound = dailyreward.getConfig().getString("Already_Received_Reward_Sound");
+        this.notExistPlayerFileSound = dailyreward.getConfig().getString("Not_Exist_Player_File_Sound");
     }
 
     public ConfigurationSection loadConfigurationSection() {
@@ -87,16 +95,24 @@ public class Event implements Listener {
         Player player = (Player) event.getWhoClicked();
         File file = new File("plugins/Dailyreward/Players", player.getUniqueId() + ".yml");
         if (!file.exists()) {
+            String[] splitNotExistPlayerFileSound = notExistPlayerFileSound.split("-");
+            Sound splitSound = Sound.valueOf(splitNotExistPlayerFileSound[0]);
+            float splitVolume = Float.parseFloat(splitNotExistPlayerFileSound[1]);
+            float splitPitch = Float.parseFloat(splitNotExistPlayerFileSound[2]);
             player.sendMessage(ChatColor.YELLOW + "[알림] " + ChatColor.WHITE + "플레이어의 데이터파일이 존재하지 않습니다! 서버에 나갔다가 다시 접속해주세요!");
-            player.playSound(player, Sound.ENTITY_VILLAGER_HURT, 1,1);
+            player.playSound(player, splitSound, splitVolume,splitPitch);
             player.closeInventory();
             return;
         }
         FileConfiguration playerFile = YamlConfiguration.loadConfiguration(file);
         int keyDay = Integer.parseInt(key.replaceAll("\\D", ""));
         if (keyDay > playerFile.getInt("CumulativeDate")) {
+            String[] splitNotEnoughDaySound = notEnoughDaySound.split("-");
+            Sound splitSound = Sound.valueOf(splitNotEnoughDaySound[0]);
+            float splitVolume = Float.parseFloat(splitNotEnoughDaySound[1]);
+            float splitPitch = Float.parseFloat(splitNotEnoughDaySound[2]);
             player.sendMessage(ChatColor.YELLOW + "[알림] " + ChatColor.WHITE + "아직 해당 일차의 보상을 수령할 수 없습니다!");
-            player.playSound(player, Sound.ENTITY_VILLAGER_NO, 1,(float) 1.5);
+            player.playSound(player, splitSound, splitVolume, splitPitch);
             player.closeInventory();
             return;
         }
@@ -106,8 +122,12 @@ public class Event implements Listener {
         String rewardName = section.getString("name");
         List<String> commandList = section.getStringList("commands");
         if (rewardList.contains(key)) {
+            String[] splitAlreadyReceivedRewardSound = alreadyReceivedRewardSound.split("-");
+            Sound splitSound = Sound.valueOf(splitAlreadyReceivedRewardSound[0]);
+            float splitVolume = Float.parseFloat(splitAlreadyReceivedRewardSound[1]);
+            float splitPitch = Float.parseFloat(splitAlreadyReceivedRewardSound[2]);
             player.sendMessage(ChatColor.YELLOW + "[알림] " + ChatColor.translateAlternateColorCodes('&', rewardName) + ChatColor.WHITE + " 을(를) 이미 수령하셨습니다!");
-            player.playSound(player, Sound.ENTITY_VILLAGER_NO, 1,(float) 1.5);
+            player.playSound(player, splitSound, splitVolume, splitPitch);
             player.closeInventory();
             return;
         }
@@ -119,7 +139,11 @@ public class Event implements Listener {
         } finally {
             player.setOp(false);
             player.sendMessage(ChatColor.YELLOW + "[알림] " + ChatColor.translateAlternateColorCodes('&', rewardName) + ChatColor.WHITE + " 을(를) 수령했습니다!");
-            player.playSound(player, Sound.ENTITY_PLAYER_LEVELUP, 1,(float) 1.3);
+            String[] splitReceivedRewardSound = receivedRewardSound.split("-");
+            Sound splitSound = Sound.valueOf(splitReceivedRewardSound[0]);
+            float splitVolume = Float.parseFloat(splitReceivedRewardSound[1]);
+            float splitPitch = Float.parseFloat(splitReceivedRewardSound[2]);
+            player.playSound(player, splitSound, splitVolume, splitPitch);
             try {
                 rewardList.add(key);
                 playerFile.set("ReceivedRewards", rewardList);

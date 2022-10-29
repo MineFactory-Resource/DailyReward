@@ -5,12 +5,14 @@ import org.bukkit.Sound;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
+import java.io.IOException;
 
 public final class Dailyreward extends JavaPlugin implements Listener {
     private RewardManager rewardManager;
@@ -22,6 +24,7 @@ public final class Dailyreward extends JavaPlugin implements Listener {
     public void onEnable() {
         this.rewardManager = new RewardManager();
         createFolder();
+        createConfigFile();
         rewardManager.createRewardsYml();
         getServer().getPluginManager().registerEvents(new Event(this), this);
     }
@@ -39,6 +42,13 @@ public final class Dailyreward extends JavaPlugin implements Listener {
     public void onDisable() {
     }
 
+    public void createConfigFile() {
+        File configFile = new File(getDataFolder(), "config.yml");
+        if (!configFile.exists()) {
+            this.saveResource("config.yml", false);
+        }
+    }
+
     public void createFolder() {
         File folder = new File(getDataFolder(), "Players");
         if (!folder.exists()) {
@@ -54,9 +64,20 @@ public final class Dailyreward extends JavaPlugin implements Listener {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, Command cmd, @NotNull String label, String[] args) {
         Player player = (Player) sender;
+        String openGuiSound = getConfig().getString("Open_Gui_Sound");
+        String[] splitOpenGuiSound;
+        if (openGuiSound != null && !openGuiSound.equals("")) {
+            splitOpenGuiSound = openGuiSound.split("-");
+        } else {
+            player.sendMessage(ChatColor.YELLOW + "[알림]" + ChatColor.WHITE + " config.yml 에 Open_Gui_Sound가 비어있습니다. 관리자에게 연락해주세요.");
+            return true;
+        }
+        Sound splitSound = Sound.valueOf(splitOpenGuiSound[0]);
+        float splitVolume = Float.parseFloat(splitOpenGuiSound[1]);
+        float splitPitch = Float.parseFloat(splitOpenGuiSound[2]);
         if (cmd.getName().equals("출석체크") && player.hasPermission("dailyreward.opengui")) {
             rewardManager.openGui(player);
-            player.playSound(player, Sound.BLOCK_CHEST_OPEN, 1,1);
+            player.playSound(player, splitSound, splitVolume, splitPitch);
         }
         if (cmd.getName().equals("dailyreward") && player.hasPermission("dailyreward.reload")) {
             if (args.length > 0) {
