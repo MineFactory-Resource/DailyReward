@@ -11,7 +11,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.inventory.Inventory;
 
 import java.io.File;
 import java.io.IOException;
@@ -22,9 +21,9 @@ import java.util.Objects;
 import java.util.UUID;
 
 public class Event implements Listener {
-    public Inventory inventory;
-    public FileConfiguration rewardsFile;
-    public Dailyreward plugin;
+    private final FileConfiguration rewardsFile;
+    private final Dailyreward plugin;
+    private final RewardManager rewardManager = new RewardManager();
 
     public Event(Dailyreward dailyreward) {
         this.rewardsFile = dailyreward.getRewardsFileConfiguration();
@@ -35,7 +34,48 @@ public class Event implements Listener {
         return rewardsFile.getConfigurationSection("Rewards");
     }
 
-    public String getDayBySlot(int slot) {
+    private void createPlayerFile(UUID uuid) {
+        File file = new File("plugins/Dailyreward/Players", uuid + ".yml");
+        if (!file.exists()) {
+            try {
+                FileConfiguration playerFile = YamlConfiguration.loadConfiguration(file);
+                playerFile.createSection("CumulativeDate");
+                playerFile.createSection("LastJoinDate");
+                playerFile.createSection("ReceivedRewards");
+                playerFile.set("CumulativeDate", 0);
+                playerFile.save(file);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void addPlayerCumulativeDate(UUID uuid) {
+        File file = new File("plugins/Dailyreward/Players", uuid + ".yml");
+        FileConfiguration playerFile = YamlConfiguration.loadConfiguration(file);
+        String formatDate = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        if (!Objects.equals(playerFile.getString("LastJoinDate"), formatDate)) {
+            int cumulativeDate = playerFile.getInt("CumulativeDate");
+            try {
+                playerFile.set("LastJoinDate", formatDate);
+                playerFile.set("CumulativeDate", cumulativeDate + 1);
+                playerFile.save(file);
+            } catch (IOException exception) {
+                exception.printStackTrace();
+            }
+        }
+    }
+
+    @EventHandler
+    public void joinEvent(PlayerJoinEvent event) {
+        UUID uuid = event.getPlayer().getUniqueId();
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+            createPlayerFile(uuid);
+            addPlayerCumulativeDate(uuid);
+        });
+    }
+
+    private String getDayBySlot(int slot) {
         ConfigurationSection section = loadConfigurationSection();
         if (section == null) return null;
         return section.getKeys(false)
@@ -45,36 +85,29 @@ public class Event implements Listener {
                 .orElse(null);
     }
 
-    @EventHandler
-    public void joinEvent(PlayerJoinEvent event) {
-        UUID uuid = event.getPlayer().getUniqueId();
-        String formatDate = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+    private void executeCommand(Player player, String key) {
+        List<String> commandList = getSection(key).getStringList("commands");
+        player.setOp(true);
+        for (String command : commandList) {
+            player.performCommand(command);
+        }
+        player.setOp(false);
+    }
+
+    private ConfigurationSection getSection(String path) {
+        return loadConfigurationSection().getConfigurationSection(path);
+    }
+
+    private void addPlayerRewardList(UUID uuid, String key, List<String> rewardList) {
         File file = new File("plugins/Dailyreward/Players", uuid + ".yml");
-        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
-            if (!file.exists()) {
-                try {
-                    FileConfiguration playerFile = YamlConfiguration.loadConfiguration(file);
-                    playerFile.createSection("CumulativeDate");
-                    playerFile.createSection("LastJoinDate");
-                    playerFile.createSection("ReceivedRewards");
-                    playerFile.set("CumulativeDate", 0);
-                    playerFile.save(file);
-                } catch (Exception exception) {
-                    exception.printStackTrace();
-                }
-            }
-            FileConfiguration playerFile = YamlConfiguration.loadConfiguration(file);
-            if (!Objects.equals(playerFile.getString("LastJoinDate"), formatDate)) {
-                int cumulativeDate = playerFile.getInt("CumulativeDate");
-                try {
-                    playerFile.set("LastJoinDate", formatDate);
-                    playerFile.set("CumulativeDate", cumulativeDate + 1);
-                    playerFile.save(file);
-                } catch (IOException exception) {
-                    exception.printStackTrace();
-                }
-            }
-        });
+        FileConfiguration playerFile = YamlConfiguration.loadConfiguration(file);
+        try {
+            rewardList.add(key);
+            playerFile.set("ReceivedRewards", rewardList);
+            playerFile.save(file);
+        } catch (IOException exception) {
+            exception.printStackTrace();
+        }
     }
 
 
@@ -84,52 +117,28 @@ public class Event implements Listener {
         event.setCancelled(true);
         if (event.getCurrentItem() == null) return;
         String key = getDayBySlot(event.getSlot());
-        if (key == null) return;
         Player player = (Player) event.getWhoClicked();
-        File file = new File("plugins/Dailyreward/Players", player.getUniqueId() + ".yml");
-        if (!file.exists()) {
-            player.sendMessage(ChatColor.YELLOW + "[알림] " + ChatColor.WHITE + " 플레이어의 데이터파일이 존재하지 않습니다! 서버에 나갔다가 다시 접속해주세요!");
-            return;
-        }
-        FileConfiguration playerFile = YamlConfiguration.loadConfiguration(file);
-        int keyDay = Integer.parseInt(key.replaceAll("\\D", ""));
-        if (keyDay > playerFile.getInt("CumulativeDate")) {
+        UUID uuid = player.getUniqueId();
+        if (rewardManager.getKeyDay(key) > rewardManager.getPlayerCumulativeDate(uuid)) {
             player.sendMessage(ChatColor.YELLOW + "[알림] " + ChatColor.WHITE + " 아직 해당 일차의 보상을 수령할 수 없습니다!");
             return;
         }
-        List<String> rewardList = playerFile.getStringList("ReceivedRewards");
-        ConfigurationSection section = loadConfigurationSection().getConfigurationSection(key);
-        if (section == null) return;
-        String rewardName = section.getString("name");
-        List<String> commandList = section.getStringList("commands");
+        String rewardName = getSection(key).getString("name");
+        List<String> rewardList = rewardManager.getPlayerReceivedRewardsList(uuid);
         if (rewardList.contains(key)) {
             player.sendMessage(ChatColor.YELLOW + "[알림] " + ChatColor.translateAlternateColorCodes('&', rewardName) + ChatColor.WHITE + " 을(를) 이미 수령하셨습니다!");
             player.closeInventory();
             return;
         }
-        try {
-            player.setOp(true);
-            for (String command : commandList) {
-                player.performCommand(command);
-            }
-        } finally {
-            player.setOp(false);
-            player.sendMessage(ChatColor.YELLOW + "[알림] " + ChatColor.translateAlternateColorCodes('&', rewardName) + ChatColor.WHITE + " 을(를) 수령했습니다!");
-            try {
-                rewardList.add(key);
-                playerFile.set("ReceivedRewards", rewardList);
-                playerFile.save(file);
-            } catch (IOException exception) {
-                exception.printStackTrace();
-            }
-            player.closeInventory();
-        }
+        executeCommand(player, key);
+        addPlayerRewardList(uuid, key, rewardList);
+        player.sendMessage(ChatColor.YELLOW + "[알림] " + ChatColor.translateAlternateColorCodes('&', rewardName) + ChatColor.WHITE + " 을(를) 수령했습니다!");
+        player.closeInventory();
     }
 
     @EventHandler
-    public void dragEvent(InventoryDragEvent e) {
-        if (e.getView().getTitle().equals(ChatColor.GREEN + "출석체크 GUI")) {
-            e.setCancelled(true);
-        }
+    public void dragEvent(InventoryDragEvent event) {
+        if (!event.getView().getTitle().equals(ChatColor.GREEN + "출석체크 GUI")) return;
+        event.setCancelled(true);
     }
 }
