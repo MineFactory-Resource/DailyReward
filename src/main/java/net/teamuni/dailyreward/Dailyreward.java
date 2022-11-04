@@ -6,17 +6,14 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
-import java.util.UUID;
 
 public final class Dailyreward extends JavaPlugin implements Listener {
     private RewardManager rewardManager;
     public Dailyreward plugin;
-
 
 
     @Override
@@ -24,10 +21,11 @@ public final class Dailyreward extends JavaPlugin implements Listener {
         this.rewardManager = new RewardManager();
         createFolder();
         rewardManager.createRewardsYml();
+        rewardManager.reload();
         getServer().getPluginManager().registerEvents(new Event(this), this);
     }
 
-    public Dailyreward getPlugin(){
+    public Dailyreward getPlugin() {
         plugin = this;
         return plugin;
     }
@@ -36,11 +34,7 @@ public final class Dailyreward extends JavaPlugin implements Listener {
         return rewardManager.getRewardsFile();
     }
 
-    @Override
-    public void onDisable() {
-    }
-
-    public void createFolder() {
+    private void createFolder() {
         File folder = new File(getDataFolder(), "Players");
         if (!folder.exists()) {
             try {
@@ -63,13 +57,17 @@ public final class Dailyreward extends JavaPlugin implements Listener {
                 if (args[0].equals("reload")) {
                     rewardManager.reload();
                     player.sendMessage(ChatColor.YELLOW + "[알림]" + ChatColor.WHITE + " DailyReward 플러그인이 리로드되었습니다.");
-                    return true;
+                } else {
+                    player.sendMessage(ChatColor.YELLOW + "[알림]" + ChatColor.WHITE + " 알 수 없는 명령어 입니다.");
                 }
             } else {
                 player.sendMessage(ChatColor.YELLOW + "[알림]" + ChatColor.WHITE + " 알 수 없는 명령어 입니다.");
-                return true;
             }
         }
         return true;
+    }
+
+    @Override
+    public void onDisable() {
     }
 }
