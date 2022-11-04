@@ -24,11 +24,9 @@ public class RewardManager implements Listener {
 
     public void createRewardsYml() {
         this.file = new File(main.getDataFolder(), "rewards.yml");
-
         if (!file.exists()) {
             main.saveResource("rewards.yml", false);
         }
-        this.rewardsFile = YamlConfiguration.loadConfiguration(file);
     }
 
     public FileConfiguration getRewardsFile() {
@@ -39,20 +37,70 @@ public class RewardManager implements Listener {
         this.rewardsFile = YamlConfiguration.loadConfiguration(file);
     }
 
-    /*
-    public void save() {
-        try{
-            this.rewardsFile.save(file);
-        } catch (IOException e){
+    private FileConfiguration getPlayerFileConfiguration(UUID uuid) {
+        File file = new File("plugins/Dailyreward/Players", uuid + ".yml");
+        return YamlConfiguration.loadConfiguration(file);
+    }
+
+    public int getKeyDay(String key) {
+        return Integer.parseInt(key.replaceAll("\\D", ""));
+    }
+
+    public int getPlayerCumulativeDate(UUID uuid) {
+        return getPlayerFileConfiguration(uuid).getInt("CumulativeDate");
+    }
+
+    public List<String> getPlayerReceivedRewardsList(UUID uuid) {
+        return getPlayerFileConfiguration(uuid).getStringList("ReceivedRewards");
+    }
+
+    private List<String> rewardLoreSet(ConfigurationSection section, String key, UUID uuid) {
+        List<String> rewardLoreList = new ArrayList<>();
+        for (String lore : section.getStringList("lore")) {
+            if (lore.contains("%rewards_receipt_status%")) {
+                if (getKeyDay(key) > getPlayerCumulativeDate(uuid)) {
+                    String placeholderLore = lore.replace("%rewards_receipt_status%", "아직 해당 일차보상을 획득할 수 없습니다.");
+                    rewardLoreList.add(ChatColor.translateAlternateColorCodes('&', placeholderLore));
+                } else {
+                    String placeholderLore;
+                    if (getPlayerReceivedRewardsList(uuid).contains(key)) {
+                        placeholderLore = lore.replace("%rewards_receipt_status%", "이미 해당 일차보상을 수령했습니다.");
+                    } else {
+                        placeholderLore = lore.replace("%rewards_receipt_status%", "해당 일차보상을 수령할 수 있습니다.");
+                    }
+                    rewardLoreList.add(ChatColor.translateAlternateColorCodes('&', placeholderLore));
+                }
+            } else {
+                rewardLoreList.add(ChatColor.translateAlternateColorCodes('&', lore));
+            }
+        }
+        return rewardLoreList;
+    }
+
+    private ItemStack rewardItemSet(ConfigurationSection section, String key, UUID uuid) {
+        ItemStack rewardsItem = null;
+        try {
+            rewardsItem = new ItemStack(Material.valueOf(section.getString("item_type")));
+            ItemMeta meta = rewardsItem.getItemMeta();
+            String rewardsName = section.getString("name");
+            List<String> rewardLoreList = rewardLoreSet(section, key, uuid);
+            if (rewardsName != null) {
+                meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', rewardsName));
+            } else {
+                Bukkit.getLogger().info("rewards.yml 파일중 보상의 이름이 없습니다. rewards.yml을 확인해주세요.");
+            }
+            meta.setLore(rewardLoreList);
+            meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
+            rewardsItem.setItemMeta(meta);
+        } catch (IllegalArgumentException e) {
             e.printStackTrace();
         }
+        return rewardsItem;
     }
-     */
 
     @NotNull
     public Map<Integer, ItemStack> getRewards(UUID uuid) {
-        File file = new File("plugins/Dailyreward/Players", uuid + ".yml");
-        FileConfiguration playerFile = YamlConfiguration.loadConfiguration(file);
+        getPlayerFileConfiguration(uuid);
         ConfigurationSection section = this.rewardsFile.getConfigurationSection("Rewards");
         Map<Integer, ItemStack> rewards = new HashMap<>();
         Set<String> rewardsKeys = section.getKeys(false);
@@ -61,54 +109,23 @@ public class RewardManager implements Listener {
         }
         for (String key : rewardsKeys) {
             ConfigurationSection sectionSecond = section.getConfigurationSection(key);
-            int keyDay = Integer.parseInt(key.replaceAll("\\D", ""));
             int slot = sectionSecond.getInt("slot");
-            try {
-                ItemStack rewardsItem = new ItemStack(Material.valueOf(sectionSecond.getString("item_type")));
-                ItemMeta meta = rewardsItem.getItemMeta();
-                String rewardsName = sectionSecond.getString("name");
-                List<String> rewardLoreList = new ArrayList<>();
-                for (String lores : sectionSecond.getStringList("lore")) {
-                    if(lores.contains("%rewards_receipt_status%")) {
-                        if (keyDay > playerFile.getInt("CumulativeDate")) {
-                            String placeholderLore = lores.replace("%rewards_receipt_status%", "아직 해당 일차보상을 획득할 수 없습니다.");
-                            rewardLoreList.add(ChatColor.translateAlternateColorCodes('&', placeholderLore));
-                        } else {
-                            List<String> rewardList = playerFile.getStringList("ReceivedRewards");
-                            if (rewardList.contains(key)) {
-                                String placeholderLore = lores.replace("%rewards_receipt_status%", "이미 해당 일차보상을 수령했습니다.");
-                                rewardLoreList.add(ChatColor.translateAlternateColorCodes('&', placeholderLore));
-                            } else {
-                                String placeholderLore = lores.replace("%rewards_receipt_status%", "해당 일차보상을 수령할 수 있습니다.");
-                                rewardLoreList.add(ChatColor.translateAlternateColorCodes('&', placeholderLore));
-                            }
-                        }
-                    } else {
-                        rewardLoreList.add(ChatColor.translateAlternateColorCodes('&', lores));
-                    }
-                }
-                if (rewardsName != null) {
-                    meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', rewardsName));
-                } else {
-                    Bukkit.getLogger().info("rewards.yml 파일중 보상의 이름이 없습니다. rewards.yml을 확인해주세요.");
-                }
-                meta.setLore(rewardLoreList);
-                meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
-                rewardsItem.setItemMeta(meta);
-                rewards.put(slot, rewardsItem);
-            } catch (IllegalArgumentException e) {
-                e.printStackTrace();
-            }
+            ItemStack rewardsItem = rewardItemSet(sectionSecond, key, uuid);
+            rewards.put(slot, rewardsItem);
         }
         return rewards;
     }
 
-    public void openGui(Player player){
-        Inventory dailyRewardGui = Bukkit.createInventory(null, 54, ChatColor.GREEN + "출석체크 GUI");
+    private void loadItems(Inventory gui, Player player) {
         Map<Integer, ItemStack> dailyItem = new HashMap<>(getRewards(player.getUniqueId()));
         for (Map.Entry<Integer, ItemStack> dailyItems : dailyItem.entrySet()) {
-            dailyRewardGui.setItem(dailyItems.getKey(), dailyItems.getValue());
+            gui.setItem(dailyItems.getKey(), dailyItems.getValue());
         }
+    }
+
+    public void openGui(Player player) {
+        Inventory dailyRewardGui = Bukkit.createInventory(null, 54, ChatColor.GREEN + "출석체크 GUI");
+        loadItems(dailyRewardGui, player);
         player.openInventory(dailyRewardGui);
     }
 }
