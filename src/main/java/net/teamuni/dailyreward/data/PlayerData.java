@@ -1,7 +1,5 @@
 package net.teamuni.dailyreward.data;
 
-import net.teamuni.dailyreward.Dailyreward;
-import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -14,13 +12,6 @@ import java.util.Objects;
 import java.util.UUID;
 
 public class PlayerData {
-    private final Dailyreward main;
-
-    public PlayerData(Dailyreward instance) {
-        this.main = instance;
-    }
-
-
     public void addPlayerCumulativeDate(UUID uuid) {
         File file = new File("plugins/Dailyreward/Players", uuid + ".yml");
         FileConfiguration playerFile = YamlConfiguration.loadConfiguration(file);

@@ -26,7 +26,7 @@ public final class Dailyreward extends JavaPlugin implements Listener {
     public void onEnable() {
         this.rewardManager = new RewardManager(this);
         this.playerDataManager = new PlayerDataManager(this);
-        this.playerData = new PlayerData(this);
+        this.playerData = new PlayerData();
         this.dailyRewardGui = new DailyRewardGui(this);
         this.dailyRewardCommand = new DailyRewardCommand(this);
         playerDataManager.createFolder();
