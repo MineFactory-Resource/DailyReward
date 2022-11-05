@@ -22,8 +22,8 @@ public class DailyRewardGui {
         }
     }
     public void openGui(Player player) {
-        Inventory rewardGui = Bukkit.createInventory(null, 54, ChatColor.GREEN + "출석체크 GUI");
-        loadItems(rewardGui, player);
-        player.openInventory(rewardGui);
+        Inventory dailyRewardGui = Bukkit.createInventory(null, 54, ChatColor.GREEN + "출석체크 GUI");
+        loadItems(dailyRewardGui, player);
+        player.openInventory(dailyRewardGui);
     }
 }
