@@ -40,8 +40,14 @@ public class RewardManager implements Listener {
         return rewardsFile.getConfigurationSection("Rewards");
     }
 
-    public FileConfiguration getRewardsFile() {
-        return this.rewardsFile;
+    public String getDayBySlot(int slot) {
+        ConfigurationSection section = this.rewardsFile.getConfigurationSection("Rewards");
+        if (section == null) return null;
+        return section.getKeys(false)
+                .stream()
+                .filter(key -> section.getInt(key + ".slot") == slot)
+                .findFirst()
+                .orElse(null);
     }
 
     public ConfigurationSection getSection(String key) {

@@ -17,24 +17,12 @@ public class ClickEvent implements Listener {
     public ClickEvent(Dailyreward instance) {
         this.main = instance;
     }
-
-    public String getDayBySlot(int slot) {
-        ConfigurationSection section = main.getRewardManager().getRewardsFile().getConfigurationSection("Rewards");
-        if (section == null) return null;
-        return section.getKeys(false)
-                .stream()
-                .filter(key -> section.getInt(key + ".slot") == slot)
-                .findFirst()
-                .orElse(null);
-    }
-
-
     @EventHandler
     public void clickEvent(InventoryClickEvent event) {
         if (!event.getView().getTitle().equals(ChatColor.GREEN + "출석체크 GUI")) return;
         event.setCancelled(true);
         if (event.getCurrentItem() == null) return;
-        String key = getDayBySlot(event.getSlot());
+        String key = main.getRewardManager().getDayBySlot(event.getSlot());
         Player player = (Player) event.getWhoClicked();
         UUID uuid = player.getUniqueId();
         if (main.getRewardManager().getKeyDay(key) > main.getPlayerDataManager().getPlayerCumulativeDate(uuid)) {
