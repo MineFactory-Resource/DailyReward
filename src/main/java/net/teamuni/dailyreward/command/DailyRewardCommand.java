@@ -1,6 +1,6 @@
 package net.teamuni.dailyreward.command;
 
-import net.teamuni.dailyreward.Dailyreward;
+import net.teamuni.dailyreward.DailyReward;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -11,9 +11,9 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 public class DailyRewardCommand implements CommandExecutor {
-    private final Dailyreward main;
+    private final DailyReward main;
 
-    public DailyRewardCommand(Dailyreward instance) {
+    public DailyRewardCommand(DailyReward instance) {
         this.main = instance;
     }
 

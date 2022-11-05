@@ -1,6 +1,6 @@
-name: Dailyreward
+name: DailyReward
 version: '${project.version}'
-main: net.teamuni.dailyreward.Dailyreward
+main: net.teamuni.dailyreward.DailyReward
 api-version: 1.18
 commands:
   출석체크:

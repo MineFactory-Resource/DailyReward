@@ -1,6 +1,6 @@
 package net.teamuni.dailyreward.event;
 
-import net.teamuni.dailyreward.Dailyreward;
+import net.teamuni.dailyreward.DailyReward;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -9,9 +9,9 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import java.util.UUID;
 
 public class JoinEvent implements Listener {
-    private final Dailyreward main;
+    private final DailyReward main;
 
-    public JoinEvent(Dailyreward instance) {
+    public JoinEvent(DailyReward instance) {
         this.main = instance;
     }
 

@@ -9,7 +9,7 @@
     <version>0.1.0</version>
     <packaging>jar</packaging>
 
-    <name>Dailyreward</name>
+    <name>DailyReward</name>
 
     <properties>
         <java.version>1.8</java.version>

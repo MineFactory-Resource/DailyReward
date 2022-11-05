@@ -1,6 +1,6 @@
 package net.teamuni.dailyreward.gui;
 
-import net.teamuni.dailyreward.Dailyreward;
+import net.teamuni.dailyreward.DailyReward;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -11,8 +11,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class DailyRewardGui {
-    private final Dailyreward main;
-    public DailyRewardGui(Dailyreward instance){
+    private final DailyReward main;
+    public DailyRewardGui(DailyReward instance){
         this.main = instance;
     }
     private void loadItems(Inventory gui, Player player) {

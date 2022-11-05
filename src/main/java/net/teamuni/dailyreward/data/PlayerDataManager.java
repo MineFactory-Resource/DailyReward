@@ -1,6 +1,6 @@
 package net.teamuni.dailyreward.data;
 
-import net.teamuni.dailyreward.Dailyreward;
+import net.teamuni.dailyreward.DailyReward;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.Listener;
@@ -14,9 +14,9 @@ import java.util.Objects;
 import java.util.UUID;
 
 public class PlayerDataManager implements Listener {
-    private final Dailyreward main;
+    private final DailyReward main;
 
-    public PlayerDataManager(Dailyreward instance) {
+    public PlayerDataManager(DailyReward instance) {
         this.main = instance;
     }
 

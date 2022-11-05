@@ -1,8 +1,7 @@
 package net.teamuni.dailyreward.event;
 
-import net.teamuni.dailyreward.Dailyreward;
+import net.teamuni.dailyreward.DailyReward;
 import org.bukkit.ChatColor;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -12,9 +11,9 @@ import java.util.List;
 import java.util.UUID;
 
 public class ClickEvent implements Listener {
-    private final Dailyreward main;
+    private final DailyReward main;
 
-    public ClickEvent(Dailyreward instance) {
+    public ClickEvent(DailyReward instance) {
         this.main = instance;
     }
     @EventHandler

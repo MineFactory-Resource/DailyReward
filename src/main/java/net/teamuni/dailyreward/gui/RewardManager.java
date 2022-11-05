@@ -1,6 +1,6 @@
 package net.teamuni.dailyreward.gui;
 
-import net.teamuni.dailyreward.Dailyreward;
+import net.teamuni.dailyreward.DailyReward;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -17,11 +17,11 @@ import java.io.File;
 import java.util.*;
 
 public class RewardManager implements Listener {
-    private final Dailyreward main;
+    private final DailyReward main;
     private File file;
     private FileConfiguration rewardsFile = null;
 
-    public RewardManager(Dailyreward instance) {
+    public RewardManager(DailyReward instance) {
         this.main = instance;
     }
 

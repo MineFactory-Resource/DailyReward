@@ -13,7 +13,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
 @Getter
-public final class Dailyreward extends JavaPlugin implements Listener {
+public final class DailyReward extends JavaPlugin implements Listener {
     private RewardManager rewardManager;
     private PlayerDataManager playerDataManager;
     private DailyRewardGui dailyRewardGui;
