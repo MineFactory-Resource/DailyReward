@@ -1,70 +1,42 @@
 package net.teamuni.dailyreward;
 
-import org.bukkit.ChatColor;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.entity.Player;
+import lombok.Getter;
+import net.teamuni.dailyreward.command.DailyRewardCommand;
+import net.teamuni.dailyreward.data.PlayerData;
+import net.teamuni.dailyreward.data.PlayerDataManager;
+import net.teamuni.dailyreward.event.ClickEvent;
+import net.teamuni.dailyreward.event.DragEvent;
+import net.teamuni.dailyreward.event.JoinEvent;
+import net.teamuni.dailyreward.gui.DailyRewardGui;
+import net.teamuni.dailyreward.gui.RewardManager;
+import org.bukkit.Bukkit;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.jetbrains.annotations.NotNull;
 
-import java.io.File;
-
+@Getter
 public final class Dailyreward extends JavaPlugin implements Listener {
     private RewardManager rewardManager;
-    public Dailyreward plugin;
+    private PlayerDataManager playerDataManager;
+    private PlayerData playerData;
+    private DailyRewardGui dailyRewardGui;
+    private DailyRewardCommand dailyRewardCommand;
 
 
     @Override
     public void onEnable() {
-        this.rewardManager = new RewardManager();
-        createFolder();
+        this.rewardManager = new RewardManager(this);
+        this.playerDataManager = new PlayerDataManager(this);
+        this.playerData = new PlayerData(this);
+        this.dailyRewardGui = new DailyRewardGui(this);
+        this.dailyRewardCommand = new DailyRewardCommand(this);
+        playerDataManager.createFolder();
         rewardManager.createRewardsYml();
-        rewardManager.reload();
-        getServer().getPluginManager().registerEvents(new Event(this), this);
-    }
-
-    public Dailyreward getPlugin() {
-        plugin = this;
-        return plugin;
-    }
-
-    public FileConfiguration getRewardsFileConfiguration() {
-        return rewardManager.getRewardsFile();
-    }
-
-    private void createFolder() {
-        File folder = new File(getDataFolder(), "Players");
-        if (!folder.exists()) {
-            try {
-                folder.mkdir();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-
-    @Override
-    public boolean onCommand(@NotNull CommandSender sender, Command cmd, @NotNull String label, String[] args) {
-        Player player = (Player) sender;
-        if (cmd.getName().equals("출석체크") && player.hasPermission("dailyreward.opengui")) {
-            rewardManager.openGui(player);
-        }
-        if (cmd.getName().equals("dailyreward") && player.hasPermission("dailyreward.reload")) {
-            if (args.length > 0) {
-                if (args[0].equals("reload")) {
-                    rewardManager.reload();
-                    player.sendMessage(ChatColor.YELLOW + "[알림]" + ChatColor.WHITE + " DailyReward 플러그인이 리로드되었습니다.");
-                } else {
-                    player.sendMessage(ChatColor.YELLOW + "[알림]" + ChatColor.WHITE + " 알 수 없는 명령어 입니다.");
-                }
-            } else {
-                player.sendMessage(ChatColor.YELLOW + "[알림]" + ChatColor.WHITE + " 알 수 없는 명령어 입니다.");
-            }
-        }
-        return true;
+        rewardManager.reloadRewardsYml();
+        Bukkit.getPluginManager().registerEvents(new JoinEvent(this), this);
+        Bukkit.getPluginManager().registerEvents(new ClickEvent(this), this);
+        Bukkit.getPluginManager().registerEvents(new DragEvent(), this);
+        getCommand("출석체크").setExecutor(new DailyRewardCommand(this));
+        getCommand("dailyreward").setExecutor(new DailyRewardCommand(this));
     }
 
     @Override
