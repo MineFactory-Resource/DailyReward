@@ -20,7 +20,7 @@ public class JoinEvent implements Listener {
         UUID uuid = event.getPlayer().getUniqueId();
         Bukkit.getScheduler().runTaskAsynchronously(main, () -> {
             main.getPlayerDataManager().createPlayerFile(uuid);
-            main.getPlayerData().addPlayerCumulativeDate(uuid);
+            main.getPlayerDataManager().addPlayerCumulativeDate(uuid);
         });
     }
 }

@@ -6,7 +6,11 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.Listener;
 
 import java.io.File;
+import java.io.IOException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 public class PlayerDataManager implements Listener {
@@ -54,6 +58,33 @@ public class PlayerDataManager implements Listener {
 
     public List<String> getPlayerReceivedRewardsList(UUID uuid) {
         return getPlayerFileConfiguration(uuid).getStringList("ReceivedRewards");
+    }
+    public void addPlayerCumulativeDate(UUID uuid) {
+        File file = new File("plugins/Dailyreward/Players", uuid + ".yml");
+        FileConfiguration playerFile = YamlConfiguration.loadConfiguration(file);
+        String formatDate = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        if (!Objects.equals(playerFile.getString("LastJoinDate"), formatDate)) {
+            int cumulativeDate = playerFile.getInt("CumulativeDate");
+            try {
+                playerFile.set("LastJoinDate", formatDate);
+                playerFile.set("CumulativeDate", cumulativeDate + 1);
+                playerFile.save(file);
+            } catch (IOException exception) {
+                exception.printStackTrace();
+            }
+        }
+    }
+
+    public void updatePlayerRewardList(UUID uuid, String key, List<String> rewardList) {
+        File file = new File("plugins/Dailyreward/Players", uuid + ".yml");
+        FileConfiguration playerFile = YamlConfiguration.loadConfiguration(file);
+        try {
+            rewardList.add(key);
+            playerFile.set("ReceivedRewards", rewardList);
+            playerFile.save(file);
+        } catch (IOException exception) {
+            exception.printStackTrace();
+        }
     }
 }
 

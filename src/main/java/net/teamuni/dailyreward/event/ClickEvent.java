@@ -38,7 +38,7 @@ public class ClickEvent implements Listener {
             return;
         }
         main.getDailyRewardCommand().executeCommand(player, key);
-        main.getPlayerData().addPlayerRewardList(uuid, key, rewardList);
+        main.getPlayerDataManager().updatePlayerRewardList(uuid, key, rewardList);
         player.sendMessage(ChatColor.YELLOW + "[알림] " + ChatColor.translateAlternateColorCodes('&', rewardName) + ChatColor.WHITE + " 을(를) 수령했습니다!");
         player.closeInventory();
     }
