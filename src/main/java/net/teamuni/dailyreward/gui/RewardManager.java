@@ -58,7 +58,7 @@ public class RewardManager implements Listener {
         return Integer.parseInt(key.replaceAll("\\D", ""));
     }
 
-    private List<String> rewardLoreSet(ConfigurationSection section, String key, UUID uuid) {
+    private List<String> rewardLore(ConfigurationSection section, String key, UUID uuid) {
         List<String> rewardLoreList = new ArrayList<>();
         for (String lore : section.getStringList("lore")) {
             if (lore.contains("%rewards_receipt_status%")) {
@@ -81,13 +81,13 @@ public class RewardManager implements Listener {
         return rewardLoreList;
     }
 
-    private ItemStack rewardItemSet(ConfigurationSection section, String key, UUID uuid) {
+    private ItemStack setRewardItem(ConfigurationSection section, String key, UUID uuid) {
         ItemStack rewardsItem = null;
         try {
             rewardsItem = new ItemStack(Material.valueOf(section.getString("item_type")));
             ItemMeta meta = rewardsItem.getItemMeta();
             String rewardsName = section.getString("name");
-            List<String> rewardLoreList = rewardLoreSet(section, key, uuid);
+            List<String> rewardLoreList = rewardLore(section, key, uuid);
             if (rewardsName != null) {
                 meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', rewardsName));
             } else {
@@ -114,7 +114,7 @@ public class RewardManager implements Listener {
         for (String key : rewardsKeys) {
             ConfigurationSection sectionSecond = section.getConfigurationSection(key);
             int slot = sectionSecond.getInt("slot");
-            ItemStack rewardsItem = rewardItemSet(sectionSecond, key, uuid);
+            ItemStack rewardsItem = setRewardItem(sectionSecond, key, uuid);
             rewards.put(slot, rewardsItem);
         }
         return rewards;
