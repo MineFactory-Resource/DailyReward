@@ -64,7 +64,7 @@ public class PlayerDataManager implements Listener {
         FileConfiguration playerFile = YamlConfiguration.loadConfiguration(file);
         String formatDate = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         if (!Objects.equals(playerFile.getString("LastJoinDate"), formatDate)) {
-            int cumulativeDate = playerFile.getInt("CumulativeDate");
+            int cumulativeDate = getPlayerCumulativeDate(uuid);
             try {
                 playerFile.set("LastJoinDate", formatDate);
                 playerFile.set("CumulativeDate", cumulativeDate + 1);

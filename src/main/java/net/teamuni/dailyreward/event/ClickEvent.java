@@ -21,18 +21,19 @@ public class ClickEvent implements Listener {
         if (!event.getView().getTitle().equals(ChatColor.GREEN + "출석체크 GUI")) return;
         event.setCancelled(true);
         if (event.getCurrentItem() == null) return;
-        String key = main.getRewardManager().getDayBySlot(event.getSlot());
+        String key = main.getRewardFileManager().getDayBySlot(event.getSlot());
         Player player = (Player) event.getWhoClicked();
         UUID uuid = player.getUniqueId();
-        if (main.getRewardManager().getKeyDay(key) > main.getPlayerDataManager().getPlayerCumulativeDate(uuid)) {
+        if (main.getRewardFileManager().getKeyDay(key) > main.getPlayerDataManager().getPlayerCumulativeDate(uuid)) {
             player.sendMessage(ChatColor.YELLOW + "[알림] " + ChatColor.WHITE + "아직 해당 일차의 보상을 수령할 수 없습니다!");
             player.closeInventory();
             return;
         }
-        String rewardName = main.getRewardManager().getSection(key).getString("name");
+        String rewardName = main.getRewardFileManager().getSection(key).getString("name");
         List<String> rewardList = main.getPlayerDataManager().getPlayerReceivedRewardsList(uuid);
         if (rewardList.contains(key)) {
-            player.sendMessage(ChatColor.YELLOW + "[알림] " + ChatColor.translateAlternateColorCodes('&', rewardName) + ChatColor.WHITE + " 을(를) 이미 수령하셨습니다!");
+            player.sendMessage(ChatColor.YELLOW + "[알림] " +
+                    ChatColor.translateAlternateColorCodes('&', rewardName) + ChatColor.WHITE + " 을(를) 이미 수령하셨습니다!");
             player.closeInventory();
             return;
         }

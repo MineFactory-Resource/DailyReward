@@ -27,7 +27,7 @@ public class DailyRewardCommand implements CommandExecutor {
         if (cmd.getName().equals("dailyreward") && player.hasPermission("dailyreward.reload")) {
             if (args.length > 0) {
                 if (args[0].equals("reload")) {
-                    main.getRewardManager().reloadRewardsYml();
+                    main.getRewardFileManager().reloadRewardsYml();
                     player.sendMessage(ChatColor.YELLOW + "[알림]" + ChatColor.WHITE + " DailyReward 플러그인이 리로드되었습니다.");
                 } else {
                     player.sendMessage(ChatColor.YELLOW + "[알림]" + ChatColor.WHITE + " 알 수 없는 명령어 입니다.");
@@ -40,7 +40,7 @@ public class DailyRewardCommand implements CommandExecutor {
     }
 
     public void executeCommand(Player player, String key) {
-        List<String> commandList = main.getRewardManager().getSection(key).getStringList("commands");
+        List<String> commandList = main.getRewardFileManager().getSection(key).getStringList("commands");
         if (player.isOp()) {
             for (String command : commandList) {
                 player.performCommand(command);
