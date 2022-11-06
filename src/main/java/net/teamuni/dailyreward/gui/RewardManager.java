@@ -18,6 +18,7 @@ public class RewardManager {
     public RewardManager(DailyReward instance) {
         this.main = instance;
     }
+
     private List<String> rewardLore(ConfigurationSection section, String key, UUID uuid) {
         List<String> rewardLoreList = new ArrayList<>();
         for (String lore : section.getStringList("lore")) {
@@ -45,23 +46,18 @@ public class RewardManager {
     }
 
     private ItemStack setRewardItem(ConfigurationSection section, String key, UUID uuid) {
-        ItemStack rewardsItem = null;
-        try {
-            rewardsItem = new ItemStack(Material.valueOf(section.getString("item_type")));
-            ItemMeta meta = rewardsItem.getItemMeta();
-            String rewardsName = section.getString("name");
-            if (rewardsName != null) {
-                meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', rewardsName));
-            } else {
-                Bukkit.getLogger().info("rewards.yml 파일중 보상의 이름이 없습니다. rewards.yml을 확인해주세요.");
-            }
-            List<String> rewardLoreList = rewardLore(section, key, uuid);
-            meta.setLore(rewardLoreList);
-            meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
-            rewardsItem.setItemMeta(meta);
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
+        ItemStack rewardsItem = new ItemStack(Material.valueOf(section.getString("item_type")));
+        ItemMeta meta = rewardsItem.getItemMeta();
+        String rewardsName = section.getString("name");
+        if (rewardsName != null) {
+            meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', rewardsName));
+        } else {
+            Bukkit.getLogger().info("rewards.yml 파일중 보상의 이름이 없습니다. rewards.yml을 확인해주세요.");
         }
+        List<String> rewardLoreList = rewardLore(section, key, uuid);
+        meta.setLore(rewardLoreList);
+        meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
+        rewardsItem.setItemMeta(meta);
         return rewardsItem;
     }
 
