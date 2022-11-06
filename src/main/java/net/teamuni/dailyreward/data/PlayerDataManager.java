@@ -3,7 +3,6 @@ package net.teamuni.dailyreward.data;
 import net.teamuni.dailyreward.DailyReward;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.event.Listener;
 
 import java.io.File;
 import java.io.IOException;
@@ -13,7 +12,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
-public class PlayerDataManager implements Listener {
+public class PlayerDataManager {
     private final DailyReward main;
 
     public PlayerDataManager(DailyReward instance) {
