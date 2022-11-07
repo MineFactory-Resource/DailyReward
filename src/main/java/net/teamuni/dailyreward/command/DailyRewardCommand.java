@@ -40,7 +40,7 @@ public class DailyRewardCommand implements CommandExecutor {
     }
 
     public void executeCommand(Player player, String key) {
-        List<String> commandList = main.getRewardFileManager().getSection(key).getStringList("commands");
+        List<String> commandList = main.getRewardFileManager().loadConfigurationSection().getStringList(key + ".commands");
         if (player.isOp()) {
             for (String command : commandList) {
                 player.performCommand(command);

@@ -16,6 +16,7 @@ public class ClickEvent implements Listener {
     public ClickEvent(DailyReward instance) {
         this.main = instance;
     }
+
     @EventHandler
     public void clickEvent(InventoryClickEvent event) {
         if (!event.getView().getTitle().equals(ChatColor.GREEN + "출석체크 GUI")) return;
@@ -29,7 +30,7 @@ public class ClickEvent implements Listener {
             player.closeInventory();
             return;
         }
-        String rewardName = main.getRewardFileManager().getSection(key).getString("name");
+        String rewardName = main.getRewardFileManager().loadConfigurationSection().getString(key + ".name");
         List<String> rewardList = main.getPlayerDataManager().getPlayerReceivedRewardsList(uuid);
         if (rewardList.contains(key)) {
             player.sendMessage(ChatColor.YELLOW + "[알림] " +
