@@ -64,7 +64,7 @@ public class RewardManager {
     @NotNull
     public Map<Integer, ItemStack> getRewards(UUID uuid) {
         main.getPlayerDataManager().getPlayerFileConfiguration(uuid);
-        ConfigurationSection section = main.getRewardFileManager().getRewardsFile().getConfigurationSection("Rewards");
+        ConfigurationSection section = main.getRewardFileManager().loadConfigurationSection();
         Map<Integer, ItemStack> rewards = new HashMap<>();
         Set<String> rewardsKeys = section.getKeys(false);
         if (rewardsKeys.isEmpty()) {

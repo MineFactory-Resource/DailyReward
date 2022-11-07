@@ -39,12 +39,8 @@ public class RewardFileManager {
         return rewardsFile.getConfigurationSection("Rewards");
     }
 
-    public FileConfiguration getRewardsFile() {
-        return rewardsFile;
-    }
-
     public String getDayBySlot(int slot) {
-        ConfigurationSection section = main.getRewardFileManager().getRewardsFile().getConfigurationSection("Rewards");
+        ConfigurationSection section = main.getRewardFileManager().loadConfigurationSection();
         if (section == null) return null;
         return section.getKeys(false)
                 .stream()
