@@ -2,10 +2,10 @@
 ## Description
 서버에 출석체크 기능을 추가할 수 있게 해주는 플러그인 입니다.
 ### Use Spigot Version:
-1.18.2
+1.19.2
 
 ### Tested Spigot Version:
-1.18.2
+1.19.2
 
 ### Required Plugin:
 X
@@ -20,14 +20,15 @@ X
 rewards.yml 파일에서 사용자가 직접 출석체크의 GUI를 커스텀할 수 있습니다.  
 
 rewards.yml의 양식은 다음과 같습니다.
-```Rewards:
+```
+Rewards:
   day1: #day(1~54)
     slot: 10 #0~53
     name: "&a1일차 보상" #GUI 아이템의 이름
     item_type: "EMERALD" #GUI 아이템의 타입
     lore:
       - "&e%rewards_receipt_status%" #%rewards_receipt_status% - 플레이어 데이터 파일값에 따라 바뀌는 아이템 수령 여부
-      - "&e보상 목록 :"
+      - "&e보상 목록 :" #GUI 아이템의 로어
       - "&f철괴 5개"
       - "&f금괴 5개"
     commands:
