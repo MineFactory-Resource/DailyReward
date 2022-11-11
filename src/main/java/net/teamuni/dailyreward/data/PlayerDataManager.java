@@ -13,74 +13,75 @@ import java.util.Objects;
 import java.util.UUID;
 
 public class PlayerDataManager {
-    private final DailyReward main; //생성자 초기화
+    private final DailyReward main;
 
-    public PlayerDataManager(DailyReward instance) { //PlayerDataManager 생성자
+    public PlayerDataManager(DailyReward instance) {
         this.main = instance;
     }
 
-    public void createFolder() { //Players 이름의 폴더가 없으면 폴더를 생성해주는 함수
+    public void createFolder() { //Players 이름의 폴더가 없으면 폴더를 생성해주는 메소드
         File folder = new File(main.getDataFolder(), "Players");
-        if (!folder.exists()) { //Players 폴더가 없으면,
+        if (!folder.exists()) {
             try {
-                folder.mkdir(); //Players 폴더 생성
+                folder.mkdir();
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
     }
 
-    public void createPlayerFile(UUID uuid) { //uuid의 값을 제목으로 하는 YAML 파일을 생성해주는 함수
+    public void createPlayerFile(UUID uuid) { //플레이어의 데이터가 담긴 YAML 파일을 생성해주는 메소드.
         File file = new File("plugins/Dailyreward/Players", uuid + ".yml");
-        if (!file.exists()) { //uuid의 YAML 파일이 없으면,
+        if (!file.exists()) {
             try {
                 FileConfiguration playerFile = YamlConfiguration.loadConfiguration(file);
                 playerFile.createSection("CumulativeDate");
                 playerFile.createSection("LastJoinDate");
-                playerFile.createSection("ReceivedRewards"); //CumulativeDate, LastJoinDate, ReceivedRewards 라는 섹션을 생성하고
-                playerFile.set("CumulativeDate", 0); //CumulativeDate 섹션의 값을 0으로 설정하고
-                playerFile.save(file); //uuid의 YAML 파일에 저장한다.
+                playerFile.createSection("ReceivedRewards");
+                playerFile.set("CumulativeDate", 0);
+                playerFile.save(file);
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
     }
 
-    public FileConfiguration getPlayerFileConfiguration(UUID uuid) { //uuid의 YAML을 불러오는 함수
+    public FileConfiguration getPlayerFileConfiguration(UUID uuid) {  //플레이어의 데이터가 담긴 YAML 파일을 불러와주는 메소드.
         File file = new File("plugins/Dailyreward/Players", uuid + ".yml");
         return YamlConfiguration.loadConfiguration(file);
     }
 
-    public int getPlayerCumulativeDate(UUID uuid) { //uuid의 CumulativeDate 섹션의 값을 불러오는 함수
+    public int getPlayerCumulativeDate(UUID uuid) { //플레이어의 데이터가 담긴 YAML 파일의 CumulativeDate 부분의 값을 불러와주는 함수입니다.
         return getPlayerFileConfiguration(uuid).getInt("CumulativeDate");
     }
 
-    public List<String> getPlayerReceivedRewardsList(UUID uuid) { //uuid의 ReceivedRewards 섹션의 리스트 값을 불러오는 함수
+    public List<String> getPlayerReceivedRewardsList(UUID uuid) { //플레이어의 데이터가 담긴 YAML 파일의 ReceivedRewards 부분의 값들을 불러와주는 메소드.
         return getPlayerFileConfiguration(uuid).getStringList("ReceivedRewards");
     }
-    public void addPlayerCumulativeDate(UUID uuid) {
+
+    public void addPlayerCumulativeDate(UUID uuid) { //플레이어의 데이터가 담긴 YAML 파일의 CumulativeDate 부분의 값을 추가해주는 메소드.
         File file = new File("plugins/Dailyreward/Players", uuid + ".yml");
         FileConfiguration playerFile = YamlConfiguration.loadConfiguration(file);
-        String formatDate = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")); //formatDate라는 변수에 지금 날짜를 "년도-월-일" 형식으로 지정한 값을 대입함.
-        if (!Objects.equals(playerFile.getString("LastJoinDate"), formatDate)) { //uuid의 LastJoinDate값이 formatDate 변수의 값이랑 다를시
+        String formatDate = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        if (!Objects.equals(playerFile.getString("LastJoinDate"), formatDate)) {
             int cumulativeDate = getPlayerCumulativeDate(uuid);
             try {
-                playerFile.set("LastJoinDate", formatDate); //uuid YAML의 LastJoinDate 섹션의 값을 formatDate 변수값으로 설정하고
-                playerFile.set("CumulativeDate", cumulativeDate + 1); //uuid YAML의 CumulativeDate 섹션의 값에 1을 더함.
-                playerFile.save(file); //uuid의 YAML 파일에 저장한다.
+                playerFile.set("LastJoinDate", formatDate);
+                playerFile.set("CumulativeDate", cumulativeDate + 1);
+                playerFile.save(file);
             } catch (IOException exception) {
                 exception.printStackTrace();
             }
         }
     }
 
-    public void updatePlayerRewardList(UUID uuid, String key, List<String> rewardList) {
+    public void updatePlayerRewardList(UUID uuid, String key, List<String> rewardList) { //플레이어의 데이터가 담긴 YAML 파일의 RewardList 부분을 업데이트 해주는 메소드.
         File file = new File("plugins/Dailyreward/Players", uuid + ".yml");
         FileConfiguration playerFile = YamlConfiguration.loadConfiguration(file);
         try {
-            rewardList.add(key); //rewardList라는 리스트에 key라는 문자열을 추가함.
-            playerFile.set("ReceivedRewards", rewardList); //uuid의 ReceivedRewards 값을 rewardList 리스트로 설정함.
-            playerFile.save(file); //uuid의 YAML 파일에 저장한다.
+            rewardList.add(key);
+            playerFile.set("ReceivedRewards", rewardList);
+            playerFile.save(file);
         } catch (IOException exception) {
             exception.printStackTrace();
         }
