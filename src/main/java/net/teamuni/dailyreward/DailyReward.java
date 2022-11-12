@@ -5,8 +5,7 @@ import net.teamuni.dailyreward.command.DailyRewardCommand;
 import net.teamuni.dailyreward.config.ConfigManager;
 import net.teamuni.dailyreward.config.RewardFileManager;
 import net.teamuni.dailyreward.data.PlayerDataManager;
-import net.teamuni.dailyreward.event.ClickEvent;
-import net.teamuni.dailyreward.event.DragEvent;
+import net.teamuni.dailyreward.event.InventoryEvent;
 import net.teamuni.dailyreward.event.JoinEvent;
 import net.teamuni.dailyreward.gui.DailyRewardGui;
 import net.teamuni.dailyreward.gui.RewardManager;
@@ -37,8 +36,7 @@ public final class DailyReward extends JavaPlugin implements Listener {
         rewardFileManager.createRewardsYml();
         rewardFileManager.reloadRewardsYml();
         Bukkit.getPluginManager().registerEvents(new JoinEvent(this), this);
-        Bukkit.getPluginManager().registerEvents(new ClickEvent(this), this);
-        Bukkit.getPluginManager().registerEvents(new DragEvent(), this);
+        Bukkit.getPluginManager().registerEvents(new InventoryEvent(this), this);
         getCommand("출석체크").setExecutor(new DailyRewardCommand(this));
         getCommand("dailyreward").setExecutor(new DailyRewardCommand(this));
     }
