@@ -25,16 +25,16 @@ public class RewardManager {
             if (lore.contains("%rewards_receipt_status%")) {
                 if (main.getRewardFileManager().getKeyDay(key) > main.getPlayerDataManager().getPlayerCumulativeDate(uuid)) {
                     String placeholderLore = lore.
-                            replace("%rewards_receipt_status%", "아직 해당 일차보상을 획득할 수 없습니다.");
+                            replace("%rewards_receipt_status%", main.getConfigManager().getMessage("Not_Receipt_Reward_Lore"));
                     rewardLoreList.add(ChatColor.translateAlternateColorCodes('&', placeholderLore));
                 } else {
                     String placeholderLore;
                     if (main.getPlayerDataManager().getPlayerReceivedRewardsList(uuid).contains(key)) {
                         placeholderLore = lore.
-                                replace("%rewards_receipt_status%", "이미 해당 일차보상을 수령했습니다.");
+                                replace("%rewards_receipt_status%", main.getConfigManager().getMessage("Already_Received_Reward_Lore"));
                     } else {
                         placeholderLore = lore.
-                                replace("%rewards_receipt_status%", "해당 일차보상을 수령할 수 있습니다.");
+                                replace("%rewards_receipt_status%", main.getConfigManager().getMessage("Receive_Reward_Lore"));
                     }
                     rewardLoreList.add(ChatColor.translateAlternateColorCodes('&', placeholderLore));
                 }
