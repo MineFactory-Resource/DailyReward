@@ -45,8 +45,17 @@ public class RewardManager {
         return rewardLoreList;
     }
 
+    private ItemStack rewardItemStack(ConfigurationSection section, String key, UUID uuid) { //플레이어의 보상 수령 여부에 따라 아이템의 타입을 변경해주는 메소드
+        if (main.getPlayerDataManager().getPlayerFileConfiguration(uuid).contains(key)){
+            return new ItemStack(Material.valueOf(section.getString("received_item_type")));
+        }
+        else {
+            return new ItemStack(Material.valueOf(section.getString("item_type")));
+        }
+    }
+
     private ItemStack setRewardItem(ConfigurationSection section, String key, UUID uuid) { //설정한 rewards.yml 파일에 맞게 GUI 에 들어갈 아이템의 타입과 이름, 로어를 설정해주는 메소드.
-        ItemStack rewardsItem = new ItemStack(Material.valueOf(section.getString("item_type")));
+        ItemStack rewardsItem = rewardItemStack(section, key, uuid);
         ItemMeta meta = rewardsItem.getItemMeta();
         String rewardsName = section.getString("name");
         if (rewardsName != null) {
