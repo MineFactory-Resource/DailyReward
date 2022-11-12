@@ -25,24 +25,23 @@ public class ClickEvent implements Listener {
         String key = main.getRewardFileManager().getDayBySlot(event.getSlot());
         Player player = (Player) event.getWhoClicked();
         UUID uuid = player.getUniqueId();
+        String rewardName = ChatColor.translateAlternateColorCodes('&', main.getRewardFileManager().loadConfigurationSection().getString(key + ".name"));
         if (main.getRewardFileManager().getKeyDay(key) > main.getPlayerDataManager().getPlayerCumulativeDate(uuid)) {
-            player.sendMessage(ChatColor.YELLOW + "[알림] " + ChatColor.WHITE + "아직 해당 일차의 보상을 수령할 수 없습니다!");
+            player.sendMessage(main.getConfigManager().getMessage("Not_Receipt_Reward_Message").replace("%rewards%", rewardName));
             player.closeInventory();
             main.getConfigManager().playSound(player, "Not_Receipt_Reward_Sound");
             return;
         }
-        String rewardName = main.getRewardFileManager().loadConfigurationSection().getString(key + ".name");
         List<String> rewardList = main.getPlayerDataManager().getPlayerReceivedRewardsList(uuid);
         if (rewardList.contains(key)) {
-            player.sendMessage(ChatColor.YELLOW + "[알림] " +
-                    ChatColor.translateAlternateColorCodes('&', rewardName) + ChatColor.WHITE + " 을(를) 이미 수령하셨습니다!");
+            player.sendMessage(main.getConfigManager().getMessage("Already_Received_Reward_Message").replace("%rewards%", rewardName));
             player.closeInventory();
             main.getConfigManager().playSound(player, "Already_Received_Reward_Sound");
             return;
         }
         main.getDailyRewardCommand().executeCommand(player, key);
         main.getPlayerDataManager().updatePlayerRewardList(uuid, key, rewardList);
-        player.sendMessage(ChatColor.YELLOW + "[알림] " + ChatColor.translateAlternateColorCodes('&', rewardName) + ChatColor.WHITE + " 을(를) 수령했습니다!");
+        player.sendMessage(main.getConfigManager().getMessage("Receipt_Reward_Message").replace("%rewards%", rewardName));
         player.closeInventory();
         main.getConfigManager().playSound(player, "Receipt_Reward_Sound");
     }
