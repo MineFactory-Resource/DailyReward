@@ -28,9 +28,9 @@ public class DailyRewardCommand implements CommandExecutor {
             if (args.length > 0) {
                 if (args[0].equals("reload")) {
                     main.getRewardFileManager().reloadRewardsYml();
-                    player.sendMessage(ChatColor.YELLOW + "[알림]" + ChatColor.WHITE + " DailyReward 플러그인이 리로드되었습니다.");
+                    player.sendMessage(main.getConfigManager().getMessage("Reload_Message"));
                 } else {
-                    player.sendMessage(ChatColor.YELLOW + "[알림]" + ChatColor.WHITE + " 알 수 없는 명령어 입니다.");
+                    player.sendMessage(main.getConfigManager().getMessage("Unknown_Command_Message"));
                 }
             } else {
                 main.getDailyRewardGui().openGui(player);
