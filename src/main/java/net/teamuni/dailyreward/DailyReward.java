@@ -2,6 +2,7 @@ package net.teamuni.dailyreward;
 
 import lombok.Getter;
 import net.teamuni.dailyreward.command.DailyRewardCommand;
+import net.teamuni.dailyreward.config.ConfigManager;
 import net.teamuni.dailyreward.config.RewardFileManager;
 import net.teamuni.dailyreward.data.PlayerDataManager;
 import net.teamuni.dailyreward.event.ClickEvent;
@@ -17,6 +18,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 public final class DailyReward extends JavaPlugin implements Listener {
     private RewardManager rewardManager;
     private RewardFileManager rewardFileManager;
+    private ConfigManager configManager;
     private PlayerDataManager playerDataManager;
     private DailyRewardGui dailyRewardGui;
     private DailyRewardCommand dailyRewardCommand;
@@ -25,6 +27,7 @@ public final class DailyReward extends JavaPlugin implements Listener {
     public void onEnable() {
         this.rewardManager = new RewardManager(this);
         this.rewardFileManager = new RewardFileManager(this);
+        this.configManager = new ConfigManager(this);
         this.playerDataManager = new PlayerDataManager(this);
         this.dailyRewardGui = new DailyRewardGui(this);
         this.dailyRewardCommand = new DailyRewardCommand(this);
