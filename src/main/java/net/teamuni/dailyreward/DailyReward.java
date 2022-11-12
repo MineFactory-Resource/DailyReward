@@ -32,6 +32,8 @@ public final class DailyReward extends JavaPlugin implements Listener {
         this.dailyRewardGui = new DailyRewardGui(this);
         this.dailyRewardCommand = new DailyRewardCommand(this);
         playerDataManager.createFolder();
+        configManager.createConfigFile();
+        configManager.reloadConfigFile();
         rewardFileManager.createRewardsYml();
         rewardFileManager.reloadRewardsYml();
         Bukkit.getPluginManager().registerEvents(new JoinEvent(this), this);
