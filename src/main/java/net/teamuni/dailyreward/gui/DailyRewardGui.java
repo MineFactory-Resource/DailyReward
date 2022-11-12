@@ -25,5 +25,6 @@ public class DailyRewardGui {
         Inventory dailyRewardGui = Bukkit.createInventory(null, 54, ChatColor.GREEN + "출석체크 GUI");
         loadItems(dailyRewardGui, player);
         player.openInventory(dailyRewardGui);
+        main.getConfigManager().playSound(player, "Gui_Open_Sound");
     }
 }
