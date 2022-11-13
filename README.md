@@ -129,6 +129,30 @@ Rewards:
       - "give @s minecraft:gold_ingot 20"
       - "give @s minecraft:diamond 15"
 ```
+### config.yml 에서의 소리, 메세지 커스텀 기능
+플러그인이 첫 활성화 되었을 때 생성되는  
+config.yml 파일에서 사용자가 직접 소리와 메세지를 커스텀할 수 있습니다.
+
+config.yml 파일의 양식입니다.
+```
+Sounds:
+  Gui_Open_Sound: "BLOCK_CHEST_OPEN-1-1" #Sound-Volume-Pitch
+  Receipt_Reward_Sound: "ENTITY_PLAYER_LEVELUP-1-1"
+  Not_Receipt_Reward_Sound: "ENTITY_VILLAGER_NO-1-1"
+  Already_Received_Reward_Sound: "ENTITY_VILLAGER_NO-1-1"
+Messages:
+  Not_Receipt_Reward_Message: "&e[알림] &f아직 %rewards% &f을 수령할 수 없습니다!" #%rewards% 플레이스 홀더가 사용가능한 메세지
+  Already_Received_Reward_Message: "&e[알림] %rewards% &f을 이미 수령하셨습니다!" #%rewards% 플레이스 홀더가 사용가능한 메세지
+  Receipt_Reward_Message: "&e[알림] %rewards% &f을 수령했습니다!" #%rewards% 플레이스 홀더가 사용가능한 메세지
+  Not_Receipt_Reward_Lore: "&e아직 해당 일차보상을 획득할 수 없습니다." 
+  Already_Received_Reward_Lore: "&e이미 해당 일차보상을 수령했습니다."
+  Receive_Reward_Lore: "&e해당 일차보상을 수령할 수 있습니다."
+  Reload_Message: "&e[알림] DailyReward 플러그인이 리로드 되었습니다."
+  Unknown_Command_Message: "&e[알림] 알 수 없는 명령어 입니다."
+```
+소리의 경우는 Sound-Volume-Pitch 순서로 작성하셔야 하며, Sound 목록의 경우 아래의 링크를 참고해주세요!  
+https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Sound.html
+
 
 ### 플레이어 데이터 파일 관리
 플레이어 데이터 파일은 플레이어가 첫 접속할 시 plugin/Dailyreward/Players 폴더에  
