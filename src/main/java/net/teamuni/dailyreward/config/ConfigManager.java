@@ -21,20 +21,21 @@ public class ConfigManager {
         this.main = instance;
     }
 
-    public void createConfigFile() { //config.yml 파일을 생성해주는 메소드
+    public void defineFile() { //file 전역변수가 null 일때 정의를 해주는 메소드
         if (this.file == null) {
             this.file = new File(main.getDataFolder(), "config.yml");
         }
+    }
+
+    public void createConfigFile() { //config.yml 파일을 생성해주는 메소드
+        defineFile();
         if (!this.file.exists()) {
             main.saveResource("config.yml", false);
         }
-        this.file = new File(main.getDataFolder(), "config.yml");
     }
 
     public void reloadConfigFile() { //config.yml 파일을 불러와주는 메소드
-        if (this.file == null) {
-            this.file = new File(main.getDataFolder(), "config.yml");
-        }
+        defineFile();
         this.configFile = YamlConfiguration.loadConfiguration(file);
     }
 

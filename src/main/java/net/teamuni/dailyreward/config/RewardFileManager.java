@@ -18,20 +18,21 @@ public class RewardFileManager {
         this.main = instance;
     }
 
-    public void createRewardsYml() { //rewards.yml 파일을 생성해주는 메소드.
+    public void defineFile() { //file 전역변수가 null 일때 정의를 해주는 메소드
         if (this.file == null) {
             this.file = new File(main.getDataFolder(), "rewards.yml");
         }
+    }
+
+    public void createRewardsYml() { //rewards.yml 파일을 생성해주는 메소드.
+        defineFile();
         if (!file.exists()) {
             main.saveResource("rewards.yml", false);
         }
-        this.file = new File(main.getDataFolder(), "rewards.yml");
     }
 
     public void reloadRewardsYml() { //rewards.yml 파일을 읽어와주는 메소드.
-        if (this.file == null) {
-            this.file = new File(main.getDataFolder(), "rewards.yml");
-        }
+        defineFile();
         this.rewardsFile = YamlConfiguration.loadConfiguration(file);
     }
 
